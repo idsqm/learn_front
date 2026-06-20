@@ -1,0 +1,179 @@
+.header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 6px;
+}
+
+.title {
+  font: 700 18px 'Geist', sans-serif;
+  letter-spacing: -0.02em;
+  margin: 0 0 4px;
+}
+
+.description {
+  font: 400 13.5px 'Geist', sans-serif;
+  color: #8e8d99;
+  margin: 0;
+}
+
+.endAllBtn {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 38px;
+  padding: 0 15px;
+  border: 1px solid #ecc7bb;
+  border-radius: 10px;
+  background: #fff;
+  color: #c2562f;
+  font: 600 13px 'Geist', sans-serif;
+  cursor: pointer;
+}
+.endAllBtn:hover {
+  background: #fdf3ef;
+  border-color: #e0a892;
+}
+
+.list {
+  border: 1px solid #e7e7ef;
+  border-radius: 14px;
+  background: #fff;
+  overflow: hidden;
+  margin-top: 16px;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 18px;
+}
+.rowBorder {
+  composes: row;
+  border-top: 1px solid #f0f0f5;
+}
+
+.icon {
+  flex: none;
+  width: 44px;
+  height: 44px;
+  border-radius: 11px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font: 600 12px 'Geist Mono', monospace;
+}
+
+.info {
+  flex: 1;
+  min-width: 0;
+}
+
+.deviceRow {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin-bottom: 4px;
+}
+
+.deviceName {
+  font: 600 15px 'Geist', sans-serif;
+  letter-spacing: -0.01em;
+}
+
+.currentBadge {
+  font: 500 10.5px 'Geist Mono', monospace;
+  color: #178a5a;
+  background: #eefaf2;
+  border: 1px solid #b7e3cb;
+  padding: 2px 8px;
+  border-radius: 5px;
+}
+
+.browser {
+  font: 400 13px 'Geist', sans-serif;
+  color: #5c5b67;
+  margin-bottom: 3px;
+}
+
+.meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font: 400 12px 'Geist Mono', monospace;
+  color: #9a99a6;
+}
+
+.dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  flex: none;
+}
+.dotOnline { composes: dot; background: #178a5a; }
+.dotOffline { composes: dot; background: #c4c3ce; }
+
+.lastOnline {
+  color: #178a5a;
+  font-weight: 500;
+}
+.lastOffline {
+  color: #9a99a6;
+  font-weight: 400;
+}
+
+.placeholder {
+  flex: none;
+  font: 400 12.5px 'Geist Mono', monospace;
+  color: #9a99a6;
+}
+
+.endBtn {
+  flex: none;
+  height: 36px;
+  padding: 0 16px;
+  border: 1px solid #d7d7e2;
+  border-radius: 9px;
+  background: #fff;
+  color: #c2562f;
+  font: 600 13px 'Geist', sans-serif;
+  cursor: pointer;
+}
+.endBtn:hover {
+  background: #fdf3ef;
+  border-color: #e0a892;
+}
+.endBtn:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.loading {
+  padding: 40px 0;
+  text-align: center;
+  font: 400 14px 'Geist', sans-serif;
+  color: #8e8d99;
+}
+
+.empty {
+  border: 1px solid #e7e7ef;
+  border-radius: 14px;
+  background: #fff;
+  padding: 48px 24px;
+  text-align: center;
+}
+
+.emptyTitle {
+  font: 600 16px 'Geist', sans-serif;
+  letter-spacing: -0.01em;
+  margin-bottom: 6px;
+}
+
+.emptyText {
+  font: 400 14px 'Geist', sans-serif;
+  color: #8e8d99;
+  margin: 0;
+}

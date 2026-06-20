@@ -1,0 +1,474 @@
+.hero {
+  background: #14131a;
+  color: #fff;
+}
+
+.heroInner {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 30px 24px 36px;
+}
+
+.breadcrumb {
+  font: 400 13px 'Geist Mono', monospace;
+  color: #9183f7;
+  margin-bottom: 18px;
+}
+
+.breadcrumbLink {
+  cursor: pointer;
+}
+
+.breadcrumbCurrent {
+  color: #b8b7c2;
+}
+
+.heroContent {
+  max-width: 680px;
+}
+
+.heroTitle {
+  font: 700 36px/1.15 'Geist', sans-serif;
+  letter-spacing: -.025em;
+  margin: 0 0 14px;
+}
+
+.heroDesc {
+  font: 400 17px/1.55 'Geist', sans-serif;
+  color: #c4c3ce;
+  margin: 0 0 20px;
+}
+
+.heroMeta {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  flex-wrap: wrap;
+  font: 400 14px 'Geist', sans-serif;
+  color: #c4c3ce;
+}
+
+.ratingGroup {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.ratingStar {
+  color: #e8a33d;
+  font-size: 15px;
+}
+
+.ratingValue {
+  color: #fff;
+  font-weight: 600;
+  font-family: 'Geist Mono', monospace;
+}
+
+.ratingCount {
+  color: #9a99a6;
+}
+
+.dot {
+  color: #3a3942;
+}
+
+.students {
+  font-family: 'Geist Mono', monospace;
+}
+
+.authorName {
+  color: #fff;
+}
+
+.layout {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 32px 24px 64px;
+  display: grid;
+  grid-template-columns: 1fr 356px;
+  gap: 44px;
+  align-items: start;
+}
+
+.card {
+  border: 1px solid #e7e7ef;
+  border-radius: 14px;
+  background: #fff;
+  padding: 26px;
+  margin-bottom: 28px;
+}
+
+.sectionTitle {
+  font: 700 20px 'Geist', sans-serif;
+  letter-spacing: -.02em;
+  margin: 0 0 18px;
+}
+
+.learnGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 13px 28px;
+}
+
+.learnItem {
+  display: flex;
+  align-items: flex-start;
+  gap: 11px;
+  font: 400 14.5px/1.45 'Geist', sans-serif;
+  color: #3a3942;
+}
+
+.checkIcon {
+  flex: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #efedfe;
+  color: #5d4ee6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  margin-top: 1px;
+}
+
+.curriculumTitle {
+  font: 700 20px 'Geist', sans-serif;
+  letter-spacing: -.02em;
+  margin: 0 0 8px;
+}
+
+.curriculumMeta {
+  font: 400 13.5px 'Geist Mono', monospace;
+  color: #8e8d99;
+  margin: 0 0 16px;
+}
+
+.curriculumCard {
+  border: 1px solid #e7e7ef;
+  border-radius: 14px;
+  background: #fff;
+  overflow: hidden;
+}
+
+.moduleHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  cursor: pointer;
+}
+
+.moduleHeaderLeft {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.chevronExpanded {
+  color: #5d4ee6;
+  font-size: 12px;
+  display: inline-block;
+}
+
+.chevronCollapsed {
+  color: #b4b3bf;
+  font-size: 12px;
+  display: inline-block;
+  transform: rotate(-90deg);
+}
+
+.moduleTitle {
+  font: 600 15px 'Geist', sans-serif;
+  letter-spacing: -.01em;
+}
+
+.moduleDuration {
+  font: 400 12.5px 'Geist Mono', monospace;
+  color: #8e8d99;
+}
+
+.moduleDivider {
+  border-top: 1px solid #f0f0f5;
+}
+
+.lessonRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 20px 12px 52px;
+}
+
+.lessonInfo {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  font: 400 14px 'Geist', sans-serif;
+  color: #3a3942;
+}
+
+.lessonIcon {
+  color: #9a99a6;
+  flex: none;
+}
+
+.freeBadge {
+  font: 500 10.5px 'Geist Mono', monospace;
+  color: #178a5a;
+  border: 1px solid #b7e3cb;
+  background: #eefaf2;
+  padding: 2px 7px;
+  border-radius: 5px;
+}
+
+.lessonDuration {
+  font: 400 12.5px 'Geist Mono', monospace;
+  color: #8e8d99;
+}
+
+.authorSectionTitle {
+  font: 700 20px 'Geist', sans-serif;
+  letter-spacing: -.02em;
+  margin: 32px 0 16px;
+}
+
+.authorCard {
+  border: 1px solid #e7e7ef;
+  border-radius: 14px;
+  background: #fff;
+  padding: 24px;
+  display: flex;
+  gap: 18px;
+}
+
+.authorAvatar {
+  flex: none;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #6a5cf0, #9183f7);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font: 600 22px 'Geist', sans-serif;
+}
+
+.authorFullName {
+  font: 600 17px 'Geist', sans-serif;
+  letter-spacing: -.01em;
+}
+
+.authorSubtitle {
+  font: 400 13.5px 'Geist', sans-serif;
+  color: #8e8d99;
+  margin: 3px 0 12px;
+}
+
+.authorBio {
+  font: 400 14.5px/1.6 'Geist', sans-serif;
+  color: #3a3942;
+  margin: 0;
+  max-width: 560px;
+}
+
+.reviewsSectionTitle {
+  font: 700 20px 'Geist', sans-serif;
+  letter-spacing: -.02em;
+  margin: 32px 0 16px;
+}
+
+.reviewsGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.reviewCard {
+  border: 1px solid #e7e7ef;
+  border-radius: 14px;
+  background: #fff;
+  padding: 20px;
+}
+
+.reviewHeader {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  margin-bottom: 12px;
+}
+
+.reviewAvatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #eef0f4;
+  color: #5c5b67;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font: 600 13px 'Geist', sans-serif;
+}
+
+.reviewName {
+  font: 600 14px 'Geist', sans-serif;
+}
+
+.reviewStars {
+  font: 400 12px 'Geist Mono', monospace;
+  color: #e8a33d;
+}
+
+.reviewText {
+  font: 400 14px/1.6 'Geist', sans-serif;
+  color: #3a3942;
+  margin: 0;
+}
+
+.sidebar {
+  position: sticky;
+  top: 76px;
+  border: 1px solid #e7e7ef;
+  border-radius: 16px;
+  background: #fff;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(24, 23, 40, .07);
+}
+
+.sidebarPreview {
+  height: 178px;
+  background-image: linear-gradient(135deg, #6a5cf0, #9183f7);
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.playButton {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, .92);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, .25);
+}
+
+.previewLabel {
+  position: absolute;
+  left: 13px;
+  bottom: 12px;
+  font: 500 11px 'Geist Mono', monospace;
+  color: #fff;
+  background: rgba(0, 0, 0, .22);
+  backdrop-filter: blur(4px);
+  padding: 4px 9px;
+  border-radius: 6px;
+}
+
+.sidebarBody {
+  padding: 22px;
+}
+
+.priceRow {
+  display: flex;
+  align-items: baseline;
+  gap: 11px;
+  margin-bottom: 4px;
+}
+
+.price {
+  font: 700 30px 'Geist', sans-serif;
+  letter-spacing: -.03em;
+}
+
+.oldPrice {
+  font: 400 16px 'Geist', sans-serif;
+  color: #a3a2ad;
+  text-decoration: line-through;
+}
+
+.discountBadge {
+  font: 600 11.5px 'Geist Mono', monospace;
+  color: #178a5a;
+  background: #eefaf2;
+  border: 1px solid #b7e3cb;
+  padding: 3px 8px;
+  border-radius: 6px;
+}
+
+.urgency {
+  font: 400 12.5px 'Geist Mono', monospace;
+  color: #d4623e;
+  margin-bottom: 18px;
+}
+
+.buyBtn {
+  width: 100%;
+  height: 48px;
+  border: none;
+  border-radius: 11px;
+  background: #5d4ee6;
+  color: #fff;
+  font: 600 15.5px 'Geist', sans-serif;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(93, 78, 230, .32);
+  margin-bottom: 10px;
+}
+
+.favBtn {
+  width: 100%;
+  height: 46px;
+  border: 1px solid #d7d7e2;
+  border-radius: 11px;
+  background: #fff;
+  color: #18171f;
+  font: 600 14.5px 'Geist', sans-serif;
+  cursor: pointer;
+}
+
+.guarantee {
+  text-align: center;
+  font: 400 12.5px 'Geist', sans-serif;
+  color: #8e8d99;
+  margin: 14px 0 18px;
+}
+
+.includesSection {
+  border-top: 1px solid #f0f0f5;
+  padding-top: 16px;
+}
+
+.includesTitle {
+  font: 600 13px 'Geist', sans-serif;
+  margin-bottom: 13px;
+}
+
+.includesList {
+  display: flex;
+  flex-direction: column;
+  gap: 11px;
+}
+
+.includesItem {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  font: 400 13.5px 'Geist', sans-serif;
+  color: #3a3942;
+}
+
+.includesCheck {
+  flex: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #efedfe;
+  color: #5d4ee6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+}

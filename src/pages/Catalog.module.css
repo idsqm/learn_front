@@ -1,0 +1,223 @@
+.wrapper {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 34px 24px 64px;
+}
+
+.header {
+  margin-bottom: 24px;
+}
+
+.breadcrumb {
+  font: 400 13px 'Geist Mono', monospace;
+  color: #8e8d99;
+  margin-bottom: 8px;
+}
+
+.title {
+  font: 700 30px 'Geist', sans-serif;
+  letter-spacing: -0.025em;
+  margin: 0 0 4px;
+}
+
+.subtitle {
+  font: 400 15px 'Geist', sans-serif;
+  color: #5c5b67;
+  margin: 0;
+}
+
+.catalogGrid {
+  display: grid;
+  grid-template-columns: 244px 1fr;
+  gap: 32px;
+  align-items: start;
+}
+
+.sidebar {
+  position: sticky;
+  top: 76px;
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+.filterCard {
+  border: 1px solid #e7e7ef;
+  border-radius: 13px;
+  background: #fff;
+  padding: 18px;
+}
+
+.filterTitle {
+  font: 600 13.5px 'Geist', sans-serif;
+  margin-bottom: 14px;
+}
+
+.filterList {
+  display: flex;
+  flex-direction: column;
+  gap: 11px;
+}
+
+.filterLabel {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  font: 400 13.5px 'Geist', sans-serif;
+  color: #3a3942;
+}
+
+.checkbox {
+  flex: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font: 700 10px 'Geist Mono', monospace;
+  color: #fff;
+}
+
+.checkboxOn {
+  background: #5d4ee6;
+  border: 1.5px solid #5d4ee6;
+}
+
+.checkboxOff {
+  background: #fff;
+  border: 1.5px solid #d7d7e2;
+}
+
+.filterName {
+  flex: 1;
+}
+
+.filterCount {
+  font: 400 12px 'Geist Mono', monospace;
+  color: #9a99a6;
+}
+
+.radioOuter {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.radioActive {
+  border: 1.5px solid #5d4ee6;
+}
+
+.radioInactive {
+  border: 1.5px solid #d7d7e2;
+}
+
+.radioDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #5d4ee6;
+}
+
+.ratingCheckbox {
+  width: 16px;
+  height: 16px;
+  border-radius: 5px;
+  border: 1.5px solid #d7d7e2;
+}
+
+.starColor {
+  color: #e8a33d;
+}
+
+.priceTrack {
+  height: 5px;
+  border-radius: 5px;
+  background: #f0f0f5;
+  position: relative;
+  margin: 10px 4px 12px;
+}
+
+.priceRange {
+  position: absolute;
+  left: 8%;
+  right: 32%;
+  height: 100%;
+  background: #5d4ee6;
+  border-radius: 5px;
+}
+
+.priceThumb {
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  background: #fff;
+  border: 2px solid #5d4ee6;
+}
+
+.priceThumbLeft {
+  left: 8%;
+}
+
+.priceThumbRight {
+  left: 68%;
+}
+
+.priceLabels {
+  display: flex;
+  justify-content: space-between;
+  font: 400 12px 'Geist Mono', monospace;
+  color: #8e8d99;
+}
+
+.catbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 18px;
+}
+
+.tagsRow {
+  display: flex;
+  gap: 8px;
+}
+
+.tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 32px;
+  padding: 0 12px;
+  border: 1px solid #ddd8fb;
+  background: #efedfe;
+  border-radius: 8px;
+  font: 500 12.5px 'Geist', sans-serif;
+  color: #5d4ee6;
+}
+
+.sortBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 36px;
+  padding: 0 14px;
+  border: 1px solid #d7d7e2;
+  border-radius: 9px;
+  background: #fff;
+  font: 500 13.5px 'Geist', sans-serif;
+  color: #18171f;
+  cursor: pointer;
+}
+
+.courseGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+}

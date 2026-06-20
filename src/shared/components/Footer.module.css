@@ -1,0 +1,60 @@
+.footer {
+  max-width: 1180px;
+  margin: 56px auto 0;
+  padding: 36px 24px 48px;
+  border-top: 1px solid #e7e7ef;
+  display: grid;
+  grid-template-columns: 1.4fr 1fr 1fr 1fr;
+  gap: 32px;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin-bottom: 12px;
+}
+
+.brandIcon {
+  width: 26px;
+  height: 26px;
+  border-radius: 7px;
+  background: #5d4ee6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font: 700 13px 'Geist Mono', monospace;
+}
+
+.brandName {
+  font: 700 16px 'Geist', sans-serif;
+  letter-spacing: -0.02em;
+}
+
+.tagline {
+  font: 400 13.5px/1.6 'Geist', sans-serif;
+  color: #8e8d99;
+  margin: 0;
+  max-width: 260px;
+}
+
+.groupTitle {
+  font: 600 13px 'Geist', sans-serif;
+  margin-bottom: 12px;
+}
+
+.groupLinks {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  font: 400 13.5px 'Geist', sans-serif;
+  color: #8e8d99;
+}
+
+.groupLinks span {
+  cursor: pointer;
+}
+.groupLinks span:hover {
+  color: #5d4ee6;
+}

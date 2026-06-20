@@ -1,0 +1,368 @@
+.heroSection {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 60px 24px 36px;
+}
+
+.heroGrid {
+  display: grid;
+  grid-template-columns: 1.08fr .92fr;
+  gap: 52px;
+  align-items: center;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 12px;
+  border: 1px solid #ddd8fb;
+  background: #efedfe;
+  border-radius: 999px;
+  font: 500 12.5px 'Geist Mono', monospace;
+  color: #5d4ee6;
+  margin-bottom: 22px;
+}
+
+.heroTitle {
+  font: 700 54px/1.04 'Geist', sans-serif;
+  letter-spacing: -.03em;
+  margin: 0 0 18px;
+}
+
+.heroSubtitle {
+  font: 400 18px/1.6 'Geist', sans-serif;
+  color: #5c5b67;
+  margin: 0 0 30px;
+  max-width: 500px;
+}
+
+.heroButtons {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 34px;
+}
+
+.btnPrimary {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  height: 48px;
+  padding: 0 24px;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  background: #5d4ee6;
+  color: #fff;
+  font: 600 15px 'Geist', sans-serif;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(93, 78, 230, .32);
+}
+
+.btnSecondary {
+  display: inline-flex;
+  align-items: center;
+  height: 48px;
+  padding: 0 22px;
+  border: 1px solid #d7d7e2;
+  border-radius: 10px;
+  background: #fff;
+  color: #18171f;
+  font: 600 15px 'Geist', sans-serif;
+  cursor: pointer;
+}
+
+.statsRow {
+  display: flex;
+  gap: 28px;
+  font: 400 13.5px 'Geist', sans-serif;
+  color: #5c5b67;
+}
+
+.statValue {
+  font: 600 19px 'Geist', sans-serif;
+  color: #18171f;
+  display: block;
+  letter-spacing: -.02em;
+}
+
+.statDivider {
+  width: 1px;
+  background: #e7e7ef;
+}
+
+.heroVisualWrap {
+  position: relative;
+}
+
+.heroVisualGlow {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(120% 120% at 70% 10%, #efedfe 0%, rgba(239, 237, 254, 0) 60%);
+  border-radius: 24px;
+}
+
+.heroCard {
+  position: relative;
+  background: #fff;
+  border: 1px solid #e7e7ef;
+  border-radius: 16px;
+  box-shadow: 0 20px 50px rgba(24, 23, 40, .1);
+  overflow: hidden;
+}
+
+.heroCardThumb {
+  height: 188px;
+  background-image: linear-gradient(135deg, #6a5cf0, #9183f7);
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.playBtn {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, .92);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, .2);
+}
+
+.videoOverlay {
+  position: absolute;
+  font: 500 11px 'Geist Mono', monospace;
+  color: #fff;
+  background: rgba(0, 0, 0, .2);
+  backdrop-filter: blur(4px);
+  padding: 4px 9px;
+  border-radius: 6px;
+}
+
+.videoOverlayLeft {
+  composes: videoOverlay;
+  left: 14px;
+  bottom: 12px;
+}
+
+.videoOverlayRight {
+  composes: videoOverlay;
+  right: 14px;
+  bottom: 12px;
+}
+
+.heroCardBody {
+  padding: 18px 18px 20px;
+}
+
+.heroCardModule {
+  font: 500 11.5px 'Geist Mono', monospace;
+  color: #5d4ee6;
+  margin-bottom: 7px;
+}
+
+.heroCardTitle {
+  font: 600 17px 'Geist', sans-serif;
+  letter-spacing: -.01em;
+  margin-bottom: 14px;
+}
+
+.progressTrack {
+  height: 6px;
+  border-radius: 6px;
+  background: #f0f0f5;
+  overflow: hidden;
+  margin-bottom: 8px;
+}
+
+.progressFill {
+  height: 100%;
+  width: 42%;
+  background: #5d4ee6;
+  border-radius: 6px;
+}
+
+.progressInfo {
+  display: flex;
+  justify-content: space-between;
+  font: 400 12.5px 'Geist', sans-serif;
+  color: #8e8d99;
+}
+
+.progressPercent {
+  font-family: 'Geist Mono', monospace;
+}
+
+.categoriesSection {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 24px 24px;
+}
+
+.sectionHeader {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 18px;
+}
+
+.sectionTitle {
+  font: 700 22px 'Geist', sans-serif;
+  letter-spacing: -.02em;
+  margin: 0;
+}
+
+.sectionLink {
+  font: 500 14px 'Geist', sans-serif;
+  color: #5d4ee6;
+  cursor: pointer;
+}
+
+.categoriesGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+
+.categoryCard {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px;
+  border: 1px solid #e7e7ef;
+  border-radius: 12px;
+  background: #fff;
+  cursor: pointer;
+  transition: border-color .15s, background .15s;
+}
+
+.categoryIcon {
+  flex: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font: 600 15px 'Geist Mono', monospace;
+}
+
+.categoryInfo {
+  min-width: 0;
+}
+
+.categoryName {
+  font: 600 14.5px 'Geist', sans-serif;
+  letter-spacing: -.01em;
+}
+
+.categoryCount {
+  font: 400 12px 'Geist Mono', monospace;
+  color: #8e8d99;
+  margin-top: 2px;
+}
+
+.featuredSection {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 28px 24px 8px;
+}
+
+.featuredGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 18px;
+}
+
+.bandSection {
+  margin: 48px auto 0;
+  max-width: 1180px;
+  padding: 0 24px;
+}
+
+.bandInner {
+  background: #14131a;
+  border-radius: 20px;
+  padding: 52px 48px;
+  display: grid;
+  grid-template-columns: 1fr .85fr;
+  gap: 48px;
+  align-items: center;
+  overflow: hidden;
+  position: relative;
+}
+
+.bandGlow {
+  position: absolute;
+  right: -80px;
+  top: -80px;
+  width: 320px;
+  height: 320px;
+  background: radial-gradient(circle, #5d4ee6 0%, rgba(93, 78, 230, 0) 70%);
+  opacity: .35;
+}
+
+.bandContent {
+  position: relative;
+}
+
+.bandLabel {
+  font: 500 12.5px 'Geist Mono', monospace;
+  color: #9183f7;
+  margin-bottom: 14px;
+}
+
+.bandTitle {
+  font: 700 34px/1.12 'Geist', sans-serif;
+  letter-spacing: -.025em;
+  color: #fff;
+  margin: 0 0 16px;
+}
+
+.bandText {
+  font: 400 16px/1.6 'Geist', sans-serif;
+  color: #b8b7c2;
+  margin: 0 0 26px;
+  max-width: 440px;
+}
+
+.bandBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  height: 46px;
+  padding: 0 22px;
+  border: none;
+  border-radius: 10px;
+  background: #fff;
+  color: #14131a;
+  font: 600 15px 'Geist', sans-serif;
+  cursor: pointer;
+}
+
+.bandStatsGrid {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.bandStatCard {
+  background: rgba(255, 255, 255, .05);
+  border: 1px solid rgba(255, 255, 255, .1);
+  border-radius: 12px;
+  padding: 18px;
+}
+
+.bandStatValue {
+  font: 700 26px 'Geist', sans-serif;
+  color: #fff;
+  letter-spacing: -.02em;
+}
+
+.bandStatLabel {
+  font: 400 13px 'Geist', sans-serif;
+  color: #b8b7c2;
+  margin-top: 4px;
+}

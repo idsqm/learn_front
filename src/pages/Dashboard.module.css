@@ -1,0 +1,277 @@
+.main {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 34px 24px 64px;
+}
+
+.mainUnauth {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 80px 24px;
+  text-align: center;
+}
+
+.unauthTitle {
+  font: 700 28px 'Geist', sans-serif;
+  letter-spacing: -.025em;
+  margin: 0 0 8px;
+}
+
+.unauthText {
+  font: 400 15px 'Geist', sans-serif;
+  color: #5c5b67;
+  margin: 0;
+}
+
+.header {
+  margin-bottom: 24px;
+}
+
+.headerTitle {
+  font: 700 28px 'Geist', sans-serif;
+  letter-spacing: -.025em;
+  margin: 0 0 4px;
+}
+
+.headerSubtitle {
+  font: 400 15px 'Geist', sans-serif;
+  color: #5c5b67;
+  margin: 0;
+}
+
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 30px;
+}
+
+.statCard {
+  border: 1px solid #e7e7ef;
+  border-radius: 13px;
+  background: #fff;
+  padding: 18px 20px;
+}
+
+.statValue {
+  font: 700 26px 'Geist', sans-serif;
+  letter-spacing: -.02em;
+}
+
+.statLabel {
+  font: 400 13px 'Geist', sans-serif;
+  color: #8e8d99;
+  margin-top: 3px;
+}
+
+.tabsBar {
+  display: flex;
+  gap: 24px;
+  border-bottom: 1px solid #e7e7ef;
+  margin-bottom: 24px;
+}
+
+.tab {
+  padding: 0 2px 12px;
+  font: 500 14.5px 'Geist', sans-serif;
+  color: #8e8d99;
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+}
+
+.tabActive {
+  padding: 0 2px 12px;
+  font: 600 14.5px 'Geist', sans-serif;
+  color: #18171f;
+  border-bottom: 2px solid #5d4ee6;
+  cursor: pointer;
+}
+
+.sectionTitle {
+  font: 700 18px 'Geist', sans-serif;
+  letter-spacing: -.02em;
+  margin: 0 0 16px;
+}
+
+.enrolledList {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-bottom: 36px;
+}
+
+.enrolledCard {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  border: 1px solid #e7e7ef;
+  border-radius: 14px;
+  background: #fff;
+  padding: 14px;
+}
+
+.enrolledThumb {
+  flex: none;
+  width: 108px;
+  height: 68px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.enrolledInfo {
+  flex: 1;
+  min-width: 0;
+}
+
+.enrolledTitleRow {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin-bottom: 5px;
+}
+
+.enrolledTitle {
+  font: 600 15.5px 'Geist', sans-serif;
+  letter-spacing: -.01em;
+}
+
+.completedBadge {
+  font: 500 10.5px 'Geist Mono', monospace;
+  color: #178a5a;
+  background: #eefaf2;
+  border: 1px solid #b7e3cb;
+  padding: 2px 8px;
+  border-radius: 5px;
+}
+
+.enrolledMeta {
+  font: 400 12.5px 'Geist', sans-serif;
+  color: #8e8d99;
+  margin-bottom: 11px;
+}
+
+.progressRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.progressTrack {
+  flex: 1;
+  height: 6px;
+  border-radius: 6px;
+  background: #f0f0f5;
+  overflow: hidden;
+}
+
+.progressFill {
+  height: 100%;
+  border-radius: 6px;
+}
+
+.progressFillActive {
+  height: 100%;
+  border-radius: 6px;
+  background: #5d4ee6;
+}
+
+.progressFillCompleted {
+  height: 100%;
+  border-radius: 6px;
+  background: #178a5a;
+}
+
+.progressText {
+  font: 500 12px 'Geist Mono', monospace;
+  color: #5c5b67;
+  width: 88px;
+  text-align: right;
+}
+
+.enrollBtn {
+  flex: none;
+  height: 40px;
+  padding: 0 18px;
+  border-radius: 10px;
+  cursor: pointer;
+  font: 600 13.5px 'Geist', sans-serif;
+  background: #5d4ee6;
+  color: #fff;
+  border: 1px solid transparent;
+}
+
+.enrollBtnCompleted {
+  flex: none;
+  height: 40px;
+  padding: 0 18px;
+  border-radius: 10px;
+  cursor: pointer;
+  font: 600 13.5px 'Geist', sans-serif;
+  background: #fff;
+  color: #18171f;
+  border: 1px solid #d7d7e2;
+}
+
+.recommendHeader {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.recommendTitle {
+  font: 700 18px 'Geist', sans-serif;
+  letter-spacing: -.02em;
+  margin: 0;
+}
+
+.catalogLink {
+  font: 500 13.5px 'Geist', sans-serif;
+  color: #5d4ee6;
+  cursor: pointer;
+}
+
+.recommendGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 18px;
+}
+
+.emptyState {
+  border: 1px solid #e7e7ef;
+  border-radius: 14px;
+  background: #fff;
+  padding: 48px 24px;
+  text-align: center;
+}
+
+.emptyTitle {
+  font: 600 16px 'Geist', sans-serif;
+  letter-spacing: -.01em;
+  margin-bottom: 6px;
+}
+
+.emptyText {
+  font: 400 14px 'Geist', sans-serif;
+  color: #8e8d99;
+  margin: 0 0 16px;
+}
+
+.emptyTextNoMargin {
+  font: 400 14px 'Geist', sans-serif;
+  color: #8e8d99;
+  margin: 0;
+}
+
+.emptyBtn {
+  height: 42px;
+  padding: 0 20px;
+  border: 1px solid #d7d7e2;
+  border-radius: 10px;
+  background: #fff;
+  color: #18171f;
+  font: 600 14px 'Geist', sans-serif;
+  cursor: pointer;
+}
