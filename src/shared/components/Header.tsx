@@ -9,8 +9,15 @@ export default function Header() {
   const { pathname } = useLocation();
   const { isAuthenticated, user, logout } = useAuthStore();
   const [authMode, setAuthMode] = useState<'login' | 'register' | null>(null);
+  const [search, setSearch] = useState('');
 
   const initials = user?.username ? user.username.slice(0, 2).toUpperCase() : 'АП';
+
+  const handleSearch = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter' && search.trim()) {
+      navigate(`/catalog?search=${encodeURIComponent(search.trim())}`);
+    }
+  };
 
   return (
     <>
@@ -32,7 +39,13 @@ export default function Header() {
               <circle cx="7" cy="7" r="5" stroke="currentColor" strokeWidth="1.6" />
               <line x1="10.7" y1="10.7" x2="14.5" y2="14.5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
             </svg>
-            <input className={s.searchInput} placeholder="Поиск курсов, авторов, тем…" />
+            <input
+              className={s.searchInput}
+              placeholder="Поиск курсов, авторов, тем…"
+              value={search}
+              onChange={e => setSearch(e.target.value)}
+              onKeyDown={handleSearch}
+            />
           </div>
         </div>
 

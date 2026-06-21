@@ -1,4 +1,4 @@
-import { apiClient } from '../../../shared/api/apiClient';
+import { authClient as apiClient } from '../../../shared/api/apiClient';
 import { AxiosError } from 'axios';
 
 export interface TokenResponse {

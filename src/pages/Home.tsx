@@ -1,12 +1,16 @@
 import { useNavigate } from 'react-router-dom';
-import { courses, categories } from '../data/mockData';
+import { useFeaturedCourses, useCategories } from '../features/courses/api/queries';
 import CourseCard from '../shared/components/CourseCard';
 import Footer from '../shared/components/Footer';
 import s from './Home.module.css';
 
 export default function Home() {
   const navigate = useNavigate();
-  const featured = courses.slice(0, 4);
+  const { data: featuredData } = useFeaturedCourses();
+  const { data: categoriesData } = useCategories();
+
+  const featured = featuredData?.data ?? [];
+  const categories = categoriesData?.data ?? [];
 
   return (
     <main>
@@ -66,13 +70,13 @@ export default function Home() {
         </div>
         <div className={`${s.categoriesGrid} lq-grid-4`}>
           {categories.map(cat => (
-            <div key={cat.n} onClick={() => navigate('/catalog')} className={s.categoryCard}>
+            <div key={cat.id} onClick={() => navigate(`/catalog?category=${encodeURIComponent(cat.name)}`)} className={s.categoryCard}>
               <div className={s.categoryIcon} style={{
-                background: cat.ic + '1f', color: cat.ic,
-              }}>{cat.m}</div>
+                background: cat.color + '1f', color: cat.color,
+              }}>{cat.abbreviation}</div>
               <div className={s.categoryInfo}>
-                <div className={s.categoryName}>{cat.n}</div>
-                <div className={s.categoryCount}>{cat.cnt} курсов</div>
+                <div className={s.categoryName}>{cat.name}</div>
+                <div className={s.categoryCount}>{cat.courses_count} курсов</div>
               </div>
             </div>
           ))}
