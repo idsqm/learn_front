@@ -16,12 +16,19 @@ export interface Session {
 }
 
 export class AuthApiError extends Error {
+  status: number;
+  code: string | null;
+  fieldErrors: Record<string, string[]> | null;
+
   constructor(
-    public status: number,
-    public code: string | null,
-    public fieldErrors: Record<string, string[]> | null,
+    status: number,
+    code: string | null,
+    fieldErrors: Record<string, string[]> | null,
   ) {
     super(code || 'Validation error');
+    this.status = status;
+    this.code = code;
+    this.fieldErrors = fieldErrors;
   }
 }
 

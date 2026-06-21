@@ -22,7 +22,7 @@ export default function Catalog() {
   const [selectedCategories, setSelectedCategories] = useState<Set<string>>(
     initialCategory ? new Set([initialCategory]) : new Set(),
   );
-  const [searchQuery, setSearchQuery] = useState(initialSearch);
+  const [searchQuery, _setSearchQuery] = useState(initialSearch);
   const [level, setLevel] = useState<string>('');
   const [ratingMin, setRatingMin] = useState<number | undefined>();
   const [sort, setSort] = useState('популярные');
@@ -72,7 +72,6 @@ export default function Catalog() {
     setPage(1);
   };
 
-  const sortLabel = SORT_OPTIONS.find(o => o.value === sort)?.label ?? 'Популярные';
 
   return (
     <main className={s.wrapper}>
