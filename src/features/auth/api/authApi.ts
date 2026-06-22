@@ -102,4 +102,12 @@ export const authApi = {
       return data;
     } catch (err) { handleError(err); }
   },
+
+  async getMe(accessToken?: string) {
+    try {
+      const headers = accessToken ? { Authorization: `Bearer ${accessToken}` } : undefined;
+      const { data } = await apiClient.get<{ id: string; username: string; email: string }>('/auth/me', { headers });
+      return data;
+    } catch (err) { handleError(err); }
+  },
 };

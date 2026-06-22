@@ -28,18 +28,15 @@ function parseJwt(token: string): Record<string, unknown> | null {
   } catch { return null; }
 }
 
-function extractUser(accessToken: string): User {
-  const payload = parseJwt(accessToken);
-  return {
-    username: (payload?.username as string) || (payload?.sub as string) || '',
-    email: (payload?.email as string) || '',
-  };
-}
-
 function tokenExpiresIn(token: string): number {
   const payload = parseJwt(token);
   if (!payload?.exp) return 0;
   return (payload.exp as number) * 1000 - Date.now();
+}
+
+async function fetchUser(accessToken?: string): Promise<User> {
+  const me = await authApi.getMe(accessToken);
+  return { username: me.username, email: me.email };
 }
 
 function saveToStorage(accessToken: string, refreshToken: string, user: User) {
@@ -69,13 +66,8 @@ function scheduleRefresh(get: () => AuthState) {
   refreshTimer = setTimeout(async () => {
     try {
       const tokens = await authApi.refresh(refreshToken);
-      const user = extractUser(tokens.access_token);
-      useAuthStore.setState({
-        accessToken: tokens.access_token,
-        refreshToken: tokens.refresh_token,
-        user,
-        isAuthenticated: true,
-      });
+      const user = await fetchUser(tokens.access_token);
+      useAuthStore.setState({ accessToken: tokens.access_token, refreshToken: tokens.refresh_token, user, isAuthenticated: true });
       saveToStorage(tokens.access_token, tokens.refresh_token, user);
       scheduleRefresh(useAuthStore.getState as () => AuthState);
     } catch {
@@ -108,17 +100,15 @@ export const useAuthStore = create<AuthState>((set, get) => ({
         loading: false,
       });
       scheduleRefresh(get);
+      fetchUser().then(user => {
+        set({ user });
+        saveToStorage(stored.accessToken, stored.refreshToken, user);
+      }).catch(() => {});
     } else if (stored.refreshToken) {
       authApi.refresh(stored.refreshToken)
-        .then(tokens => {
-          const user = extractUser(tokens.access_token);
-          set({
-            accessToken: tokens.access_token,
-            refreshToken: tokens.refresh_token,
-            user,
-            isAuthenticated: true,
-            loading: false,
-          });
+        .then(async tokens => {
+          const user = await fetchUser(tokens.access_token);
+          set({ accessToken: tokens.access_token, refreshToken: tokens.refresh_token, user, isAuthenticated: true, loading: false });
           saveToStorage(tokens.access_token, tokens.refresh_token, user);
           scheduleRefresh(get);
         })
@@ -134,13 +124,8 @@ export const useAuthStore = create<AuthState>((set, get) => ({
 
   login: async (email, password) => {
     const tokens = await authApi.login(email, password);
-    const user = extractUser(tokens.access_token);
-    set({
-      accessToken: tokens.access_token,
-      refreshToken: tokens.refresh_token,
-      user,
-      isAuthenticated: true,
-    });
+    const user = await fetchUser(tokens.access_token);
+    set({ accessToken: tokens.access_token, refreshToken: tokens.refresh_token, user, isAuthenticated: true });
     saveToStorage(tokens.access_token, tokens.refresh_token, user);
     scheduleRefresh(get);
   },
@@ -167,13 +152,8 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     if (!refreshToken) return null;
     try {
       const tokens = await authApi.refresh(refreshToken);
-      const user = extractUser(tokens.access_token);
-      set({
-        accessToken: tokens.access_token,
-        refreshToken: tokens.refresh_token,
-        user,
-        isAuthenticated: true,
-      });
+      const user = await fetchUser(tokens.access_token);
+      set({ accessToken: tokens.access_token, refreshToken: tokens.refresh_token, user, isAuthenticated: true });
       saveToStorage(tokens.access_token, tokens.refresh_token, user);
       scheduleRefresh(get);
       return tokens.access_token;
