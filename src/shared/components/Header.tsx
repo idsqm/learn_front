@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuthStore } from '../../features/auth/store/authStore';
 import AuthModal from '../../features/auth/components/AuthModal';
+import LogoIcon from './LogoIcon';
 import s from './Header.module.css';
 
 export default function Header() {
@@ -23,7 +24,7 @@ export default function Header() {
     <>
       <header className={s.header}>
         <div className={s.logo} onClick={() => navigate('/')}>
-          <div className={s.logoIcon}>L</div>
+          <LogoIcon size={32} />
           <span className={s.logoText}>LearnQuest</span>
         </div>
 

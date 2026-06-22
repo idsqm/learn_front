@@ -1,3 +1,4 @@
+import LogoIcon from './LogoIcon';
 import s from './Footer.module.css';
 
 export default function Footer() {
@@ -5,7 +6,7 @@ export default function Footer() {
     <footer className={`${s.footer} lq-footer`}>
       <div>
         <div className={s.brand}>
-          <div className={s.brandIcon}>L</div>
+          <LogoIcon size={28} />
           <span className={s.brandName}>LearnQuest</span>
         </div>
         <p className={s.tagline}>Платформа онлайн-курсов для тех, кто учится и учит.</p>

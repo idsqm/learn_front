@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useAuthStore } from '../store/authStore';
 import { AuthApiError } from '../api/authApi';
+import LogoIcon from '../../../shared/components/LogoIcon';
 import s from './AuthModal.module.css';
 
 interface Props {
@@ -25,7 +26,8 @@ export default function AuthModal({ mode, onClose, onSwitch }: Props) {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [agreed, setAgreed] = useState(true);
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [agreed, setAgreed] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [fieldErrors, setFieldErrors] = useState<Record<string, string[]>>({});
@@ -38,6 +40,7 @@ export default function AuthModal({ mode, onClose, onSwitch }: Props) {
 
     if (!email || !password) { setError('Заполните все обязательные поля'); return; }
     if (!isLogin && !name) { setError('Укажите имя'); return; }
+    if (!isLogin && password !== confirmPassword) { setError('Пароли не совпадают'); return; }
     if (!isLogin && !agreed) { setError('Необходимо принять условия'); return; }
 
     setLoading(true);
@@ -79,7 +82,7 @@ export default function AuthModal({ mode, onClose, onSwitch }: Props) {
   };
 
   const handleSwitch = () => {
-    setName(''); setEmail(''); setPassword(''); setAgreed(true);
+    setName(''); setEmail(''); setPassword(''); setConfirmPassword(''); setAgreed(true);
     setError(''); setFieldErrors({}); setSuccessMsg('');
     onSwitch();
   };
@@ -90,7 +93,7 @@ export default function AuthModal({ mode, onClose, onSwitch }: Props) {
         <button className={s.closeBtn} onClick={onClose}>✕</button>
 
         <div className={s.logo}>
-          <div className={s.logoIcon}>L</div>
+          <LogoIcon size={36} />
           <span style={{ font: "700 18px/1 'Geist', sans-serif", letterSpacing: '-.02em' }}>LearnQuest</span>
         </div>
 
@@ -134,6 +137,20 @@ export default function AuthModal({ mode, onClose, onSwitch }: Props) {
                 {renderFieldError('password')}
               </div>
               {!isLogin && (
+                <div>
+                  <label className={s.label}>Подтвердите пароль</label>
+                  <input
+                    tabIndex={4}
+                    type="password"
+                    className={s.input}
+                    placeholder="Повторите пароль"
+                    value={confirmPassword}
+                    onChange={e => setConfirmPassword(e.target.value)}
+                    onKeyDown={e => e.key === 'Enter' && handleSubmit()}
+                  />
+                </div>
+              )}
+              {!isLogin && (
                 <label className={s.checkbox} onClick={() => setAgreed(!agreed)}>
                   <span className={agreed ? s.checkboxChecked : s.checkboxUnchecked}>{agreed ? '✓' : ''}</span>
                   <span>Я принимаю <a className={s.accentLink}>условия использования</a> и <a className={s.accentLink}>политику конфиденциальности</a></span>
@@ -141,7 +158,7 @@ export default function AuthModal({ mode, onClose, onSwitch }: Props) {
               )}
             </div>
 
-            <button tabIndex={4} className={s.submitBtn} disabled={loading} onClick={handleSubmit}>
+            <button tabIndex={5} className={s.submitBtn} disabled={loading} onClick={handleSubmit}>
               {loading ? 'Подождите…' : (isLogin ? 'Войти' : 'Создать аккаунт')}
             </button>
           </>
