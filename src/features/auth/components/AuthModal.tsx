@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useAuthStore } from '../store/authStore';
 import { AuthApiError } from '../api/authApi';
 import s from './AuthModal.module.css';
@@ -12,6 +12,15 @@ interface Props {
 export default function AuthModal({ mode, onClose, onSwitch }: Props) {
   const { login, register } = useAuthStore();
   const isLogin = mode === 'login';
+  const nameRef = useRef<HTMLInputElement>(null);
+  const emailRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    requestAnimationFrame(() => {
+      if (isLogin) emailRef.current?.focus();
+      else nameRef.current?.focus();
+    });
+  }, [mode]);
 
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -70,6 +79,7 @@ export default function AuthModal({ mode, onClose, onSwitch }: Props) {
   };
 
   const handleSwitch = () => {
+    setName(''); setEmail(''); setPassword(''); setAgreed(true);
     setError(''); setFieldErrors({}); setSuccessMsg('');
     onSwitch();
   };
@@ -98,13 +108,13 @@ export default function AuthModal({ mode, onClose, onSwitch }: Props) {
               {!isLogin && (
                 <div>
                   <label className={s.label}>Имя</label>
-                  <input className={fieldErrors.username ? s.inputError : s.input} placeholder="Как вас зовут?" value={name} onChange={e => setName(e.target.value)} />
+                  <input ref={nameRef} tabIndex={1} className={fieldErrors.username ? s.inputError : s.input} placeholder="Как вас зовут?" value={name} onChange={e => setName(e.target.value)} onKeyDown={e => e.key === 'Enter' && handleSubmit()} />
                   {renderFieldError('username')}
                 </div>
               )}
               <div>
                 <label className={s.label}>Электронная почта</label>
-                <input className={fieldErrors.email ? s.inputError : s.input} placeholder="you@example.com" value={email} onChange={e => setEmail(e.target.value)} />
+                <input ref={emailRef} tabIndex={2} className={fieldErrors.email ? s.inputError : s.input} placeholder="you@example.com" value={email} onChange={e => setEmail(e.target.value)} onKeyDown={e => e.key === 'Enter' && handleSubmit()} />
                 {renderFieldError('email')}
               </div>
               <div>
@@ -113,6 +123,7 @@ export default function AuthModal({ mode, onClose, onSwitch }: Props) {
                   {isLogin && <a className={s.forgotLink}>Забыли?</a>}
                 </div>
                 <input
+                  tabIndex={3}
                   type="password"
                   className={fieldErrors.password ? s.inputError : s.input}
                   placeholder={isLogin ? 'Ваш пароль' : 'Минимум 8 символов'}
@@ -130,7 +141,7 @@ export default function AuthModal({ mode, onClose, onSwitch }: Props) {
               )}
             </div>
 
-            <button className={s.submitBtn} disabled={loading} onClick={handleSubmit}>
+            <button tabIndex={4} className={s.submitBtn} disabled={loading} onClick={handleSubmit}>
               {loading ? 'Подождите…' : (isLogin ? 'Войти' : 'Создать аккаунт')}
             </button>
           </>
