@@ -9,6 +9,7 @@
   justify-content: center;
   padding: 48px 20px;
   overflow: auto;
+  animation: overlayIn .25s ease-out;
 }
 
 .modal {
@@ -20,6 +21,16 @@
   border-radius: 20px;
   box-shadow: 0 30px 70px rgba(20, 19, 26, 0.35);
   padding: 32px 32px 28px;
+  animation: modalIn .35s cubic-bezier(.22,1,.36,1);
+}
+
+@keyframes overlayIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes modalIn {
+  from { opacity: 0; transform: translateY(24px) scale(.96); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
 }
 
 .closeBtn {
@@ -191,9 +202,15 @@
   font: 600 15px 'Geist', sans-serif;
   cursor: pointer;
   box-shadow: 0 4px 14px rgba(93, 78, 230, 0.32);
+  transition: background .2s, transform .15s, box-shadow .2s;
 }
 .submitBtn:hover {
   background: #4d3ed6;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(93, 78, 230, 0.4);
+}
+.submitBtn:active {
+  transform: translateY(0);
 }
 .submitBtn:disabled {
   background: #9183f7;

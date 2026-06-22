@@ -8,13 +8,14 @@ interface Props {
   showLevel?: boolean;
   showStudents?: boolean;
   compact?: boolean;
+  className?: string;
 }
 
-export default function CourseCard({ course: c, showLevel, showStudents, compact }: Props) {
+export default function CourseCard({ course: c, showLevel, showStudents, compact, className }: Props) {
   const navigate = useNavigate();
 
   return (
-    <article className={s.card} onClick={() => navigate(`/course/${c.id}`)}>
+    <article className={`${s.card}${className ? ` ${className}` : ''}`} onClick={() => navigate(`/course/${c.id}`)}>
       <div className={s.thumb} style={{ backgroundImage: `linear-gradient(135deg, ${c.color_1}, ${c.color_2})` }}>
         <span className={s.categoryBadge}>{c.category}</span>
         {c.tag && <span className={s.tagBadge}>{c.tag}</span>}

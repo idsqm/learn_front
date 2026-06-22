@@ -2,6 +2,11 @@
   max-width: 1180px;
   margin: 0 auto;
   padding: 60px 24px 36px;
+  animation: revealUp .7s cubic-bezier(.22,1,.36,1) both;
+}
+@keyframes revealUp {
+  from { opacity: 0; transform: translateY(28px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
 .heroGrid {
@@ -56,7 +61,14 @@
   font: 600 15px 'Geist', sans-serif;
   cursor: pointer;
   box-shadow: 0 4px 14px rgba(93, 78, 230, .32);
+  transition: background .2s, transform .15s, box-shadow .2s;
 }
+.btnPrimary:hover {
+  background: #4d3ed6;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 22px rgba(93, 78, 230, .44);
+}
+.btnPrimary:active { transform: translateY(0); }
 
 .btnSecondary {
   display: inline-flex;
@@ -69,7 +81,14 @@
   color: #18171f;
   font: 600 15px 'Geist', sans-serif;
   cursor: pointer;
+  transition: border-color .2s, background .2s, transform .15s;
 }
+.btnSecondary:hover {
+  border-color: #c9c3f7;
+  background: #faf9ff;
+  transform: translateY(-2px);
+}
+.btnSecondary:active { transform: translateY(0); }
 
 .statsRow {
   display: flex;
@@ -128,6 +147,12 @@
   align-items: center;
   justify-content: center;
   box-shadow: 0 6px 18px rgba(0, 0, 0, .2);
+  transition: transform .2s, box-shadow .2s;
+  cursor: pointer;
+}
+.playBtn:hover {
+  transform: scale(1.1);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, .3);
 }
 
 .videoOverlay {
@@ -181,6 +206,11 @@
   width: 42%;
   background: #5d4ee6;
   border-radius: 6px;
+  animation: progressGrow .8s cubic-bezier(.22,1,.36,1) .5s both;
+}
+@keyframes progressGrow {
+  from { width: 0; }
+  to { width: 42%; }
 }
 
 .progressInfo {
@@ -217,6 +247,10 @@
   font: 500 14px 'Geist', sans-serif;
   color: #5d4ee6;
   cursor: pointer;
+  transition: opacity .2s;
+}
+.sectionLink:hover {
+  opacity: .75;
 }
 
 .categoriesGrid {
@@ -234,7 +268,13 @@
   border-radius: 12px;
   background: #fff;
   cursor: pointer;
-  transition: border-color .15s, background .15s;
+  transition: border-color .2s, background .2s, transform .2s, box-shadow .2s;
+}
+.categoryCard:hover {
+  border-color: #c9c3f7;
+  background: #faf9ff;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(24, 23, 40, .06);
 }
 
 .categoryIcon {
@@ -339,7 +379,13 @@
   color: #14131a;
   font: 600 15px 'Geist', sans-serif;
   cursor: pointer;
+  transition: transform .15s, box-shadow .2s;
 }
+.bandBtn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(255, 255, 255, .2);
+}
+.bandBtn:active { transform: translateY(0); }
 
 .bandStatsGrid {
   position: relative;
@@ -353,6 +399,12 @@
   border: 1px solid rgba(255, 255, 255, .1);
   border-radius: 12px;
   padding: 18px;
+  transition: background .2s, border-color .2s, transform .2s;
+}
+.bandStatCard:hover {
+  background: rgba(255, 255, 255, .1);
+  border-color: rgba(255, 255, 255, .2);
+  transform: translateY(-2px);
 }
 
 .bandStatValue {

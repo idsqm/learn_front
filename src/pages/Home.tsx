@@ -1,5 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { useFeaturedCourses, useCategories } from '../features/courses/api/queries';
+import { useReveal, useRevealChildren } from '../shared/hooks/useReveal';
 import CourseCard from '../shared/components/CourseCard';
 import Footer from '../shared/components/Footer';
 import s from './Home.module.css';
@@ -11,6 +12,11 @@ export default function Home() {
 
   const featured = featuredData?.data ?? [];
   const categories = categoriesData?.data ?? [];
+
+  const categoriesRef = useRevealChildren<HTMLDivElement>(80);
+  const featuredRef = useRevealChildren<HTMLDivElement>(100);
+  const bandRef = useReveal<HTMLDivElement>();
+  const bandStatsRef = useRevealChildren<HTMLDivElement>(100);
 
   return (
     <main>
@@ -68,9 +74,9 @@ export default function Home() {
           <h2 className={s.sectionTitle}>Категории</h2>
           <a onClick={() => navigate('/catalog')} className={s.sectionLink}>Все категории →</a>
         </div>
-        <div className={`${s.categoriesGrid} lq-grid-4`}>
+        <div ref={categoriesRef} className={`${s.categoriesGrid} lq-grid-4`}>
           {categories.map(cat => (
-            <div key={cat.id} onClick={() => navigate(`/catalog?category=${encodeURIComponent(cat.name)}`)} className={s.categoryCard}>
+            <div key={cat.id} onClick={() => navigate(`/catalog?category=${encodeURIComponent(cat.name)}`)} className={`${s.categoryCard} reveal-item`}>
               <div className={s.categoryIcon} style={{
                 background: cat.color + '1f', color: cat.color,
               }}>{cat.abbreviation}</div>
@@ -88,13 +94,13 @@ export default function Home() {
           <h2 className={s.sectionTitle}>Популярные курсы</h2>
           <a onClick={() => navigate('/catalog')} className={s.sectionLink}>Смотреть все →</a>
         </div>
-        <div className={`${s.featuredGrid} lq-grid-4`}>
-          {featured.map(c => <CourseCard key={c.id} course={c} showStudents showLevel />)}
+        <div ref={featuredRef} className={`${s.featuredGrid} lq-grid-4`}>
+          {featured.map(c => <CourseCard key={c.id} course={c} showStudents showLevel className="reveal-item" />)}
         </div>
       </section>
 
       <section className={s.bandSection}>
-        <div className={`${s.bandInner} lq-band`}>
+        <div ref={bandRef} className={`${s.bandInner} lq-band reveal`}>
           <div className={s.bandGlow} />
           <div className={s.bandContent}>
             <div className={s.bandLabel}>ДЛЯ АВТОРОВ</div>
@@ -102,12 +108,12 @@ export default function Home() {
             <p className={s.bandText}>Загружайте уроки, устанавливайте цену и получайте до 70% с каждой продажи. Мы берём на себя оплату, хостинг видео и поддержку студентов.</p>
             <button className={s.bandBtn}>Начать преподавать →</button>
           </div>
-          <div className={s.bandStatsGrid}>
+          <div ref={bandStatsRef} className={s.bandStatsGrid}>
             {[
               { v: '70%', l: 'выплата автору' }, { v: '15 мин', l: 'на запуск курса' },
               { v: '₽1.2М', l: 'у топ-авторов в мес.' }, { v: '3 800', l: 'авторов на платформе' },
             ].map(st => (
-              <div key={st.l} className={s.bandStatCard}>
+              <div key={st.l} className={`${s.bandStatCard} reveal-item`}>
                 <div className={s.bandStatValue}>{st.v}</div>
                 <div className={s.bandStatLabel}>{st.l}</div>
               </div>

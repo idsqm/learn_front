@@ -290,6 +290,12 @@
   border-radius: 14px;
   background: #fff;
   padding: 20px;
+  transition: border-color .2s, box-shadow .2s, transform .2s;
+}
+.reviewCard:hover {
+  border-color: #c9c3f7;
+  box-shadow: 0 6px 18px rgba(24, 23, 40, .06);
+  transform: translateY(-2px);
 }
 
 .reviewHeader {
@@ -354,6 +360,12 @@
   align-items: center;
   justify-content: center;
   box-shadow: 0 6px 18px rgba(0, 0, 0, .25);
+  transition: transform .2s, box-shadow .2s;
+  cursor: pointer;
+}
+.playButton:hover {
+  transform: scale(1.1);
+  box-shadow: 0 8px 26px rgba(0, 0, 0, .35);
 }
 
 .previewLabel {
@@ -416,7 +428,14 @@
   cursor: pointer;
   box-shadow: 0 4px 14px rgba(93, 78, 230, .32);
   margin-bottom: 10px;
+  transition: background .2s, transform .15s, box-shadow .2s;
 }
+.buyBtn:hover {
+  background: #4d3ed6;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(93, 78, 230, .44);
+}
+.buyBtn:active { transform: translateY(0); }
 
 .favBtn {
   width: 100%;
@@ -427,7 +446,14 @@
   color: #18171f;
   font: 600 14.5px 'Geist', sans-serif;
   cursor: pointer;
+  transition: border-color .2s, background .2s, transform .15s;
 }
+.favBtn:hover {
+  border-color: #c9c3f7;
+  background: #faf9ff;
+  transform: translateY(-1px);
+}
+.favBtn:active { transform: translateY(0); }
 
 .guarantee {
   text-align: center;

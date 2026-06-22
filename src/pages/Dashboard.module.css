@@ -51,6 +51,12 @@
   border-radius: 13px;
   background: #fff;
   padding: 18px 20px;
+  transition: border-color .2s, box-shadow .2s, transform .2s;
+}
+.statCard:hover {
+  border-color: #c9c3f7;
+  box-shadow: 0 6px 16px rgba(24, 23, 40, .06);
+  transform: translateY(-2px);
 }
 
 .statValue {
@@ -77,6 +83,10 @@
   color: #8e8d99;
   border-bottom: 2px solid transparent;
   cursor: pointer;
+  transition: color .2s, border-color .2s;
+}
+.tab:hover {
+  color: #5c5b67;
 }
 
 .tabActive {
@@ -108,6 +118,12 @@
   border-radius: 14px;
   background: #fff;
   padding: 14px;
+  transition: border-color .2s, box-shadow .2s, transform .2s;
+}
+.enrolledCard:hover {
+  border-color: #c9c3f7;
+  box-shadow: 0 6px 18px rgba(24, 23, 40, .06);
+  transform: translateY(-2px);
 }
 
 .enrolledThumb {
@@ -175,12 +191,18 @@
   height: 100%;
   border-radius: 6px;
   background: #5d4ee6;
+  animation: progressGrow .8s cubic-bezier(.22,1,.36,1) both;
 }
 
 .progressFillCompleted {
   height: 100%;
   border-radius: 6px;
   background: #178a5a;
+  animation: progressGrow .8s cubic-bezier(.22,1,.36,1) both;
+}
+
+@keyframes progressGrow {
+  from { width: 0; }
 }
 
 .progressText {
@@ -200,6 +222,12 @@
   background: #5d4ee6;
   color: #fff;
   border: 1px solid transparent;
+  transition: background .2s, transform .15s, box-shadow .2s;
+}
+.enrollBtn:hover {
+  background: #4d3ed6;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px rgba(93, 78, 230, .35);
 }
 
 .enrollBtnCompleted {
@@ -212,6 +240,12 @@
   background: #fff;
   color: #18171f;
   border: 1px solid #d7d7e2;
+  transition: border-color .2s, background .2s, transform .15s;
+}
+.enrollBtnCompleted:hover {
+  border-color: #c9c3f7;
+  background: #faf9ff;
+  transform: translateY(-1px);
 }
 
 .recommendHeader {
