@@ -139,19 +139,9 @@
   background: #faf9ff;
 }
 
-.logoutBtn {
-  display: inline-flex;
-  align-items: center;
-  height: 36px;
-  padding: 0 12px;
-  border: none;
-  background: none;
-  color: #8e8d99;
-  font: 500 13px 'Geist', sans-serif;
-  cursor: pointer;
-}
-.logoutBtn:hover {
-  color: #5d4ee6;
+.avatarWrap {
+  position: relative;
+  flex: none;
 }
 
 .avatar {
@@ -166,4 +156,109 @@
   font: 600 13px 'Geist', sans-serif;
   cursor: pointer;
   border: 1px solid rgba(0, 0, 0, 0.05);
+  transition: box-shadow .2s;
+}
+.avatar:hover {
+  box-shadow: 0 0 0 3px #efedfe;
+}
+
+.menuOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+}
+
+.menu {
+  position: absolute;
+  right: 0;
+  top: 46px;
+  z-index: 61;
+  width: 248px;
+  background: #fff;
+  border: 1px solid #e7e7ef;
+  border-radius: 13px;
+  box-shadow: 0 16px 40px rgba(20, 19, 26, .18);
+  padding: 6px;
+  animation: menuIn .2s cubic-bezier(.22, 1, .36, 1);
+}
+@keyframes menuIn {
+  from { opacity: 0; transform: translateY(-8px) scale(.97); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.menuUser {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 9px 10px 12px;
+}
+
+.menuUserAvatar {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #6a5cf0, #9183f7);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font: 600 14px 'Geist', sans-serif;
+  flex: none;
+}
+
+.menuUserName {
+  font: 600 14px 'Geist', sans-serif;
+  letter-spacing: -.01em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.menuUserEmail {
+  font: 400 12px 'Geist Mono', monospace;
+  color: #9a99a6;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.menuDivider {
+  height: 1px;
+  background: #f0f0f5;
+  margin: 2px 4px;
+}
+
+.menuItem {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 9px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  font: 500 13.5px 'Geist', sans-serif;
+  color: #3a3942;
+  border: none;
+  background: none;
+  width: 100%;
+  text-align: left;
+}
+.menuItem:hover {
+  background: #f4f4f8;
+}
+
+.menuItemLogout {
+  composes: menuItem;
+  color: #c2562f;
+}
+.menuItemLogout:hover {
+  background: #fdf3ef;
+}
+
+.studioBadge {
+  font: 600 9.5px 'Geist Mono', monospace;
+  color: #5d4ee6;
+  background: #efedfe;
+  border: 1px solid #ddd8fb;
+  padding: 2px 6px;
+  border-radius: 5px;
 }

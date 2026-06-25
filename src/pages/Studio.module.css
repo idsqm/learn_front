@@ -1,0 +1,330 @@
+.layout {
+  min-height: 100vh;
+  background: #fbfbfd;
+}
+
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: #14131a;
+  border-bottom: 1px solid #26252e;
+}
+
+.headerInner {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 0 24px;
+  display: flex;
+  align-items: center;
+  gap: 30px;
+  height: 58px;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  flex: none;
+}
+
+.logoText {
+  font: 700 17px 'Geist', sans-serif;
+  letter-spacing: -.02em;
+  color: #fff;
+}
+
+.studioBadge {
+  font: 600 10.5px 'Geist Mono', monospace;
+  color: #b6abf5;
+  border: 1px solid #3a3550;
+  background: #231f33;
+  padding: 3px 7px;
+  border-radius: 5px;
+}
+
+.nav {
+  display: flex;
+  align-items: stretch;
+  gap: 26px;
+  height: 100%;
+  flex: none;
+}
+
+.navLink {
+  display: flex;
+  align-items: center;
+  padding: 0 1px;
+  font: 500 14px 'Geist', sans-serif;
+  color: #9a99a6;
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+  transition: color .15s;
+}
+.navLink:hover {
+  color: #cfcdd6;
+}
+
+.navLinkActive {
+  composes: navLink;
+  color: #fff;
+  font-weight: 600;
+  border-bottom-color: #5d4ee6;
+}
+
+.spacer {
+  flex: 1;
+}
+
+.previewBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  height: 36px;
+  padding: 0 14px;
+  border: 1px solid #34323d;
+  border-radius: 9px;
+  background: transparent;
+  color: #cfcdd6;
+  font: 600 13px 'Geist', sans-serif;
+  cursor: pointer;
+  transition: background .15s, color .15s;
+}
+.previewBtn:hover {
+  background: #211f29;
+  color: #fff;
+}
+
+.avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #6a5cf0, #9183f7);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font: 600 13px 'Geist', sans-serif;
+  flex: none;
+}
+
+.main {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 34px 24px 64px;
+}
+
+.pageHeader {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.pageTitle {
+  font: 700 26px 'Geist', sans-serif;
+  letter-spacing: -.025em;
+  margin: 0 0 5px;
+}
+
+.pageSubtitle {
+  font: 400 14.5px 'Geist', sans-serif;
+  color: #8e8d99;
+  margin: 0;
+}
+
+.newCourseBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 42px;
+  padding: 0 18px;
+  border: none;
+  border-radius: 10px;
+  background: #5d4ee6;
+  color: #fff;
+  font: 600 14px 'Geist', sans-serif;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(93, 78, 230, .3);
+  transition: background .2s, transform .15s;
+}
+.newCourseBtn:hover {
+  background: #4d3ed6;
+  transform: translateY(-1px);
+}
+
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 30px;
+}
+
+.statCard {
+  border: 1px solid #e7e7ef;
+  border-radius: 14px;
+  background: #fff;
+  padding: 18px 20px;
+  transition: border-color .2s, box-shadow .2s, transform .2s;
+}
+.statCard:hover {
+  border-color: #c9c3f7;
+  box-shadow: 0 6px 16px rgba(24, 23, 40, .06);
+  transform: translateY(-2px);
+}
+
+.statLabel {
+  font: 400 12.5px 'Geist', sans-serif;
+  color: #8e8d99;
+  margin-bottom: 9px;
+}
+
+.statValue {
+  font: 700 27px 'Geist', sans-serif;
+  letter-spacing: -.025em;
+  margin-bottom: 7px;
+}
+
+.statDelta {
+  font: 400 12px 'Geist Mono', monospace;
+  color: #2bb06f;
+}
+
+.coursesHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+.coursesTitle {
+  font: 700 18px 'Geist', sans-serif;
+  letter-spacing: -.02em;
+  margin: 0;
+}
+
+.coursesCount {
+  font: 400 13px 'Geist Mono', monospace;
+  color: #9a99a6;
+}
+
+.coursesList {
+  border: 1px solid #e7e7ef;
+  border-radius: 14px;
+  background: #fff;
+  overflow: hidden;
+}
+
+.courseRow {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 16px 18px;
+  cursor: pointer;
+  transition: background .15s;
+}
+.courseRow:hover {
+  background: #faf9ff;
+}
+
+.courseRowBorder {
+  composes: courseRow;
+  border-top: 1px solid #f0f0f5;
+}
+
+.courseThumb {
+  flex: none;
+  width: 80px;
+  height: 50px;
+  border-radius: 9px;
+}
+
+.courseInfo {
+  flex: 1;
+  min-width: 0;
+}
+
+.courseTitle {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 5px;
+}
+
+.courseName {
+  font: 600 15.5px 'Geist', sans-serif;
+  letter-spacing: -.01em;
+}
+
+.statusPublished {
+  font: 500 10.5px 'Geist Mono', monospace;
+  color: #178a5a;
+  background: #eefaf2;
+  border: 1px solid #b7e3cb;
+  padding: 2px 8px;
+  border-radius: 5px;
+}
+
+.statusDraft {
+  font: 500 10.5px 'Geist Mono', monospace;
+  color: #8e8d99;
+  background: #f4f4f8;
+  border: 1px solid #e7e7ef;
+  padding: 2px 8px;
+  border-radius: 5px;
+}
+
+.courseMeta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font: 400 12.5px 'Geist Mono', monospace;
+  color: #8e8d99;
+}
+
+.courseRevenue {
+  text-align: right;
+  flex: none;
+}
+
+.courseRevenueValue {
+  font: 600 14.5px 'Geist', sans-serif;
+  letter-spacing: -.01em;
+}
+
+.courseRevenuePeriod {
+  font: 400 11px 'Geist Mono', monospace;
+  color: #9a99a6;
+  margin-top: 2px;
+}
+
+.courseAction {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex: none;
+  color: #5d4ee6;
+  font: 600 13px 'Geist', sans-serif;
+}
+
+.emptyState {
+  border: 1px solid #e7e7ef;
+  border-radius: 14px;
+  background: #fff;
+  padding: 48px 24px;
+  text-align: center;
+}
+
+.emptyTitle {
+  font: 600 16px 'Geist', sans-serif;
+  letter-spacing: -.01em;
+  margin-bottom: 6px;
+}
+
+.emptyText {
+  font: 400 14px 'Geist', sans-serif;
+  color: #8e8d99;
+  margin: 0 0 16px;
+}

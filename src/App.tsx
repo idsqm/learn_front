@@ -1,16 +1,24 @@
 import { useEffect } from 'react';
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, useLocation } from 'react-router-dom';
 import { useAuthStore } from './features/auth/store/authStore';
 import Header from './shared/components/Header';
 import Home from './pages/Home';
 import Catalog from './pages/Catalog';
 import CoursePage from './pages/CoursePage';
 import Dashboard from './pages/Dashboard';
+import Studio from './pages/Studio';
 
 export default function App() {
   const initialize = useAuthStore(s => s.initialize);
+  const { pathname } = useLocation();
 
   useEffect(() => { initialize(); }, [initialize]);
+
+  const isStudio = pathname.startsWith('/studio');
+
+  if (isStudio) {
+    return <Studio />;
+  }
 
   return (
     <div style={{ minHeight: '100vh', background: '#fbfbfd' }}>

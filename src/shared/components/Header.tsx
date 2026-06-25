@@ -11,6 +11,7 @@ export default function Header() {
   const { isAuthenticated, user, logout } = useAuthStore();
   const [authMode, setAuthMode] = useState<'login' | 'register' | null>(null);
   const [search, setSearch] = useState('');
+  const [menuOpen, setMenuOpen] = useState(false);
 
   const initials = user?.username ? user.username.slice(0, 2).toUpperCase() : 'АП';
 
@@ -57,10 +58,38 @@ export default function Header() {
               <button className={`${s.registerBtn} lq-reg`} onClick={() => setAuthMode('register')}>Регистрация</button>
             </>
           ) : (
-            <>
-              <button className={s.logoutBtn} onClick={logout}>Выйти</button>
-              <div className={s.avatar} onClick={() => navigate('/dashboard')}>{initials}</div>
-            </>
+            <div className={s.avatarWrap}>
+              <div className={s.avatar} onClick={() => setMenuOpen(!menuOpen)}>{initials}</div>
+              {menuOpen && (
+                <>
+                  <div className={s.menuOverlay} onClick={() => setMenuOpen(false)} />
+                  <div className={s.menu}>
+                    <div className={s.menuUser}>
+                      <div className={s.menuUserAvatar}>{initials}</div>
+                      <div style={{ minWidth: 0 }}>
+                        <div className={s.menuUserName}>{user?.username || 'Пользователь'}</div>
+                        <div className={s.menuUserEmail}>{user?.email || ''}</div>
+                      </div>
+                    </div>
+                    <div className={s.menuDivider} />
+                    <button className={s.menuItem} onClick={() => { setMenuOpen(false); navigate('/dashboard'); }}>
+                      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#6b6a76" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"><path d="M22 10 12 5 2 10l10 5 10-5Z" /><path d="M6 12v5c0 1 2.7 2.5 6 2.5s6-1.5 6-2.5v-5" /></svg>
+                      <span>ЛК ученика</span>
+                    </button>
+                    <button className={s.menuItem} onClick={() => { setMenuOpen(false); navigate('/studio'); }}>
+                      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#6b6a76" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"><path d="M3 4h18" /><path d="M4 4v10h16V4" /><path d="M12 14v4" /><path d="M9 21l3-3 3 3" /></svg>
+                      <span style={{ flex: 1 }}>Кабинет учителя</span>
+                      <span className={s.studioBadge}>СТУДИЯ</span>
+                    </button>
+                    <div className={s.menuDivider} />
+                    <button className={s.menuItemLogout} onClick={() => { setMenuOpen(false); logout(); }}>
+                      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" /><path d="M16 17l5-5-5-5" /><path d="M21 12H9" /></svg>
+                      <span>Выйти</span>
+                    </button>
+                  </div>
+                </>
+              )}
+            </div>
           )}
         </div>
       </header>
