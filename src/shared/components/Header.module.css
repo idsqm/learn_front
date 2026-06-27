@@ -2,11 +2,13 @@
   position: sticky;
   top: 0;
   z-index: 50;
-  height: 60px;
+  height: calc(60px + env(safe-area-inset-top, 0px));
+  padding-top: env(safe-area-inset-top, 0px);
   display: flex;
   align-items: center;
   gap: 22px;
-  padding: 0 24px;
+  padding-left: max(24px, env(safe-area-inset-left, 0px));
+  padding-right: max(24px, env(safe-area-inset-right, 0px));
   background: rgba(251, 251, 253, 0.82);
   backdrop-filter: saturate(1.4) blur(10px);
   border-bottom: 1px solid #e7e7ef;

@@ -9,6 +9,7 @@
   z-index: 50;
   background: #14131a;
   border-bottom: 1px solid #26252e;
+  padding-top: env(safe-area-inset-top, 0px);
 }
 
 .headerInner {
