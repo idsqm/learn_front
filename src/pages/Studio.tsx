@@ -6,24 +6,12 @@ import s from './Studio.module.css';
 
 type Tab = 'courses' | 'students' | 'income' | 'reviews';
 
-const mockStats = [
-  { l: 'Выручка за 30 дн', v: '₽89 400', d: '+12% к прошлому мес.' },
-  { l: 'Новых студентов', v: '284', d: '+18% к прошлому мес.' },
-  { l: 'Всего студентов', v: '14 360', d: '+2% за неделю' },
-  { l: 'Средний рейтинг', v: '4.87', d: '+0.02 за месяц' },
-];
-
-const mockCourses = [
-  { title: 'Цифровая фотография с нуля', cat: 'Фотография', lessons: 64, students: 8940, rev: '₽42 600', status: 'published' as const, c1: '#6a5cf0', c2: '#9183f7' },
-  { title: 'Мобильная съёмка видео', cat: 'Видео', lessons: 52, students: 4020, rev: '₽28 400', status: 'published' as const, c1: '#5d4ee6', c2: '#8a7af0' },
-  { title: 'Lightroom: обработка для Instagram', cat: 'Фотография', lessons: 24, students: 1400, rev: '₽18 400', status: 'published' as const, c1: '#e0568f', c2: '#f291b7' },
-  { title: 'Предметная фотография', cat: 'Фотография', lessons: 8, students: 0, rev: '—', status: 'draft' as const, c1: '#c2772e', c2: '#e0a35c' },
-];
-
 export default function Studio() {
   const navigate = useNavigate();
-  const { isAuthenticated, user } = useAuthStore();
+  const { isAuthenticated, user, logout } = useAuthStore();
   const [tab, setTab] = useState<Tab>('courses');
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [burgerOpen, setBurgerOpen] = useState(false);
 
   const initials = user?.username ? user.username.slice(0, 2).toUpperCase() : 'АК';
   const displayName = user?.username || 'Автор';
@@ -64,8 +52,62 @@ export default function Studio() {
 
           <div className={s.spacer} />
           <button className={s.previewBtn} onClick={() => navigate('/')}>Предпросмотр сайта ↗</button>
-          <div className={s.avatar}>{initials}</div>
+
+          <button className={s.burger} onClick={() => setBurgerOpen(!burgerOpen)}>
+            <span className={s.burgerLine} />
+            <span className={s.burgerLine} />
+            <span className={s.burgerLine} />
+          </button>
+
+          <div className={s.avatarWrap}>
+            <div className={s.avatar} onClick={() => setMenuOpen(!menuOpen)}>{initials}</div>
+            {menuOpen && (
+              <>
+                <div className={s.menuOverlay} onClick={() => setMenuOpen(false)} />
+                <div className={s.menu}>
+                  <div className={s.menuUser}>
+                    <div className={s.menuUserAvatar}>{initials}</div>
+                    <div style={{ minWidth: 0 }}>
+                      <div className={s.menuUserName}>{user?.username || 'Пользователь'}</div>
+                      <div className={s.menuUserEmail}>{user?.email || ''}</div>
+                    </div>
+                  </div>
+                  <div className={s.menuDivider} />
+                  <button className={s.menuItem} onClick={() => { setMenuOpen(false); navigate('/dashboard'); }}>
+                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#6b6a76" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"><path d="M22 10 12 5 2 10l10 5 10-5Z" /><path d="M6 12v5c0 1 2.7 2.5 6 2.5s6-1.5 6-2.5v-5" /></svg>
+                    <span>ЛК ученика</span>
+                  </button>
+                  <div className={s.menuDivider} />
+                  <button className={s.menuItemLogout} onClick={() => { setMenuOpen(false); logout(); navigate('/'); }}>
+                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" /><path d="M16 17l5-5-5-5" /><path d="M21 12H9" /></svg>
+                    <span>Выйти</span>
+                  </button>
+                </div>
+              </>
+            )}
+          </div>
         </div>
+
+        {burgerOpen && (
+          <>
+            <div className={s.burgerOverlay} onClick={() => setBurgerOpen(false)} />
+            <div className={s.burgerMenu}>
+              {tabs.map(t => (
+                <a
+                  key={t.key}
+                  className={tab === t.key ? s.burgerItemActive : s.burgerItem}
+                  onClick={() => { setTab(t.key); setBurgerOpen(false); }}
+                >
+                  {t.label}
+                </a>
+              ))}
+              <div className={s.burgerDivider} />
+              <a className={s.burgerItem} onClick={() => { setBurgerOpen(false); navigate('/'); }}>
+                Предпросмотр сайта ↗
+              </a>
+            </div>
+          </>
+        )}
       </header>
 
       {tab === 'courses' && (
@@ -73,48 +115,18 @@ export default function Studio() {
           <div className={s.pageHeader}>
             <div>
               <h1 className={s.pageTitle}>Здравствуйте, {displayName}</h1>
-              <p className={s.pageSubtitle}>Вот как идут дела у ваших курсов сегодня.</p>
+              <p className={s.pageSubtitle}>Управляйте своими курсами и отслеживайте результаты.</p>
             </div>
             <button className={s.newCourseBtn}>＋ Новый курс</button>
           </div>
 
-          <div className={s.statsGrid}>
-            {mockStats.map(st => (
-              <div key={st.l} className={s.statCard}>
-                <div className={s.statLabel}>{st.l}</div>
-                <div className={s.statValue}>{st.v}</div>
-                <div className={s.statDelta}>{st.d}</div>
-              </div>
-            ))}
-          </div>
-
-          <div className={s.coursesHeader}>
-            <h2 className={s.coursesTitle}>Мои курсы</h2>
-            <span className={s.coursesCount}>{mockCourses.length} курсов</span>
-          </div>
-
-          <div className={s.coursesList}>
-            {mockCourses.map((c, i) => (
-              <div key={c.title} className={i === 0 ? s.courseRow : s.courseRowBorder}>
-                <div className={s.courseThumb} style={{ backgroundImage: `linear-gradient(135deg, ${c.c1}, ${c.c2})` }} />
-                <div className={s.courseInfo}>
-                  <div className={s.courseTitle}>
-                    <span className={s.courseName}>{c.title}</span>
-                    <span className={c.status === 'published' ? s.statusPublished : s.statusDraft}>
-                      {c.status === 'published' ? 'Опубликован' : 'Черновик'}
-                    </span>
-                  </div>
-                  <div className={s.courseMeta}>
-                    <span>{c.cat}</span><span>·</span><span>{c.lessons} уроков</span><span>·</span><span>{c.students} студентов</span>
-                  </div>
-                </div>
-                <div className={s.courseRevenue}>
-                  <div className={s.courseRevenueValue}>{c.rev}</div>
-                  <div className={s.courseRevenuePeriod}>за 30 дней</div>
-                </div>
-                <div className={s.courseAction}>Открыть →</div>
-              </div>
-            ))}
+          <div className={s.emptyState}>
+            <div className={s.emptyIcon}>
+              <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#b4b3bf" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"><path d="M3 4h18" /><path d="M4 4v10h16V4" /><path d="M12 14v4" /><path d="M9 21l3-3 3 3" /></svg>
+            </div>
+            <div className={s.emptyTitle}>У вас пока нет курсов</div>
+            <p className={s.emptyText}>Создайте свой первый курс — загружайте уроки, устанавливайте цену и получайте до 70% с каждой продажи.</p>
+            <button className={s.newCourseBtn} style={{ marginTop: 8 }}>＋ Создать первый курс</button>
           </div>
         </main>
       )}
@@ -124,8 +136,11 @@ export default function Studio() {
           <h1 className={s.pageTitle}>Студенты</h1>
           <p className={s.pageSubtitle} style={{ marginBottom: 24 }}>Прогресс по всем вашим курсам.</p>
           <div className={s.emptyState}>
-            <div className={s.emptyTitle}>Данные загружаются</div>
-            <p className={s.emptyText}>Информация о студентах будет доступна после подключения к бекенду.</p>
+            <div className={s.emptyIcon}>
+              <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#b4b3bf" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"><path d="M22 10 12 5 2 10l10 5 10-5Z" /><path d="M6 12v5c0 1 2.7 2.5 6 2.5s6-1.5 6-2.5v-5" /></svg>
+            </div>
+            <div className={s.emptyTitle}>Раздел будет доступен позднее</div>
+            <p className={s.emptyText}>Здесь появится информация о ваших студентах и их прогрессе по курсам.</p>
           </div>
         </main>
       )}
@@ -135,8 +150,11 @@ export default function Studio() {
           <h1 className={s.pageTitle}>Доходы и выплаты</h1>
           <p className={s.pageSubtitle} style={{ marginBottom: 24 }}>70% с каждой продажи — ваши.</p>
           <div className={s.emptyState}>
-            <div className={s.emptyTitle}>Данные загружаются</div>
-            <p className={s.emptyText}>Информация о доходах будет доступна после подключения к бекенду.</p>
+            <div className={s.emptyIcon}>
+              <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#b4b3bf" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" /></svg>
+            </div>
+            <div className={s.emptyTitle}>Раздел будет доступен позднее</div>
+            <p className={s.emptyText}>Здесь будет история выплат и статистика доходов по вашим курсам.</p>
           </div>
         </main>
       )}
@@ -146,8 +164,11 @@ export default function Studio() {
           <h1 className={s.pageTitle}>Отзывы и вопросы</h1>
           <p className={s.pageSubtitle} style={{ marginBottom: 24 }}>Отвечайте студентам, чтобы повысить рейтинг.</p>
           <div className={s.emptyState}>
-            <div className={s.emptyTitle}>Данные загружаются</div>
-            <p className={s.emptyText}>Отзывы будут доступны после подключения к бекенду.</p>
+            <div className={s.emptyIcon}>
+              <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#b4b3bf" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" /></svg>
+            </div>
+            <div className={s.emptyTitle}>Раздел будет доступен позднее</div>
+            <p className={s.emptyText}>Здесь появятся отзывы и вопросы от ваших студентов.</p>
           </div>
         </main>
       )}
