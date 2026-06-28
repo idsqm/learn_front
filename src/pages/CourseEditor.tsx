@@ -81,7 +81,7 @@ const LEVELS = [
 ];
 
 export default function CourseEditor({ courseId, onBack, onOpenLessonModal, onEditLesson }: Props) {
-  const { data: course, isLoading } = useStudioCourse(courseId);
+  const { data: course } = useStudioCourse(courseId);
 
   const { data: categoriesData } = useCategories();
   const categories = categoriesData?.data ?? [];

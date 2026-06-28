@@ -70,12 +70,13 @@ export default function Studio() {
         old_price: course.old_price,
         is_free: course.is_free,
       });
+      const createdCourseId = String(created.id);
 
       for (const mod of course.modules) {
-        const createdMod = await createModuleMut.mutateAsync({ courseId: created.id, title: mod.title });
+        const createdMod = await createModuleMut.mutateAsync({ courseId: createdCourseId, title: mod.title });
         for (const lesson of mod.lessons) {
           await createLessonMut.mutateAsync({
-            courseId: created.id,
+            courseId: createdCourseId,
             moduleId: createdMod.id,
             payload: { name: lesson.name, type: lesson.type, is_free: lesson.is_free },
           });
@@ -260,7 +261,7 @@ export default function Studio() {
                 <div
                   key={c.id}
                   className={i === 0 ? s.courseRow : s.courseRowBorder}
-                  onClick={() => handleOpenEditor(c.id)}
+                  onClick={() => handleOpenEditor(String(c.id))}
                 >
                   <div className={s.courseThumb} style={{ backgroundImage: 'linear-gradient(135deg, #6a5cf0, #9183f7)' }} />
                   <div className={s.courseInfo}>
