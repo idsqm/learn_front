@@ -97,6 +97,11 @@ export default function NewCourse({ onBack, onCreate, onOpenLessonModal, pending
     onCreate(course);
   };
 
+  const goToStep = (n: number) => {
+    setStep(n);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   const steps = [
     { num: 1, label: 'О курсе' },
     { num: 2, label: 'Программа' },
@@ -338,7 +343,7 @@ export default function NewCourse({ onBack, onCreate, onOpenLessonModal, pending
 
           <div className={s.navBtns}>
             {step < 3 && (
-              <button className={s.nextBtn} onClick={() => setStep(step + 1)}>
+              <button className={s.nextBtn} onClick={() => goToStep(step + 1)}>
                 Далее
               </button>
             )}
@@ -348,7 +353,7 @@ export default function NewCourse({ onBack, onCreate, onOpenLessonModal, pending
               </button>
             )}
             {step > 1 && (
-              <button className={s.backBtn} onClick={() => setStep(step - 1)}>
+              <button className={s.backBtn} onClick={() => goToStep(step - 1)}>
                 Назад
               </button>
             )}
