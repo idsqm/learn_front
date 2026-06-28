@@ -27,6 +27,7 @@ export default function NewCourse({ onBack, onCreate, onOpenLessonModal, pending
   const categories = categoriesData?.data ?? [];
 
   const [step, setStep] = useState(1);
+  const [errors, setErrors] = useState<Record<string, boolean>>({});
 
   /* Step 1 */
   const [title, setTitle] = useState('');
@@ -98,6 +99,17 @@ export default function NewCourse({ onBack, onCreate, onOpenLessonModal, pending
   };
 
   const goToStep = (n: number) => {
+    if (n > step && step === 1) {
+      const newErrors: Record<string, boolean> = {};
+      if (!title.trim()) newErrors.title = true;
+      if (!categoryId) newErrors.category = true;
+      if (Object.keys(newErrors).length > 0) {
+        setErrors(newErrors);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        return;
+      }
+    }
+    setErrors({});
     setStep(n);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -160,11 +172,12 @@ export default function NewCourse({ onBack, onCreate, onOpenLessonModal, pending
               <div className={s.fieldGroup}>
                 <label className={s.label}>Название курса</label>
                 <input
-                  className={s.input}
+                  className={`${s.input} ${errors.title ? s.inputError : ''}`}
                   value={title}
-                  onChange={e => setTitle(e.target.value)}
+                  onChange={e => { setTitle(e.target.value); setErrors(prev => ({ ...prev, title: false })); }}
                   placeholder="Например: React с нуля до продвинутого"
                 />
+                {errors.title && <span className={s.errorText}>Заполните название курса</span>}
               </div>
 
               <div className={s.fieldGroup}>
@@ -180,13 +193,14 @@ export default function NewCourse({ onBack, onCreate, onOpenLessonModal, pending
               <div className={s.fieldGroup}>
                 <label className={s.label}>Категория</label>
                 <select
-                  className={s.select}
+                  className={`${s.select} ${errors.category ? s.inputError : ''}`}
                   value={categoryId || ''}
-                  onChange={e => setCategoryId(Number(e.target.value))}
+                  onChange={e => { setCategoryId(Number(e.target.value)); setErrors(prev => ({ ...prev, category: false })); }}
                 >
                   <option value="">Выберите категорию</option>
                   {categories.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
                 </select>
+                {errors.category && <span className={s.errorText}>Выберите категорию</span>}
               </div>
 
               <div className={s.fieldGroup}>

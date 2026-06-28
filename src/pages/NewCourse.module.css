@@ -176,6 +176,21 @@
   box-shadow: 0 0 0 3px #efedfe;
 }
 
+.inputError {
+  border-color: #e0462f;
+}
+.inputError:focus {
+  border-color: #e0462f;
+  box-shadow: 0 0 0 3px rgba(224, 70, 47, .15);
+}
+
+.errorText {
+  display: block;
+  font: 400 12px 'Geist', sans-serif;
+  color: #e0462f;
+  margin-top: 5px;
+}
+
 .select {
   composes: input;
   appearance: none;
