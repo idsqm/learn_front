@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../features/auth/store/authStore';
 import { useStudioCourses, useStudioStats, useCreateCourse, useCreateModule, useCreateLesson } from '../features/studio/api/queries';
@@ -25,10 +25,10 @@ function studioToEditor(sc: StudioCourse): EditorCourse {
     old_price: sc.old_price,
     is_free: sc.is_free,
     status: sc.status,
-    modules: sc.modules.map(m => ({
+    modules: (sc.modules ?? []).map(m => ({
       id: m.id,
       title: m.title,
-      lessons: m.lessons.map(l => ({
+      lessons: (m.lessons ?? []).map(l => ({
         id: l.id,
         name: l.name,
         type: l.type,
@@ -65,10 +65,11 @@ export default function Studio() {
   const initials = user?.username ? user.username.slice(0, 2).toUpperCase() : 'АК';
   const displayName = user?.username || 'Автор';
 
-  if (!isAuthenticated) {
-    navigate('/');
-    return null;
-  }
+  useEffect(() => {
+    if (!isAuthenticated) navigate('/');
+  }, [isAuthenticated, navigate]);
+
+  if (!isAuthenticated) return null;
 
   const tabs: { key: Tab; label: string }[] = [
     { key: 'courses', label: 'Курсы' },
@@ -280,7 +281,7 @@ export default function Studio() {
                     <div className={s.courseMeta}>
                       <span>{c.category || '—'}</span>
                       <span>·</span>
-                      <span>{c.modules.reduce((sum, m) => sum + m.lessons.length, 0)} уроков</span>
+                      <span>{(c.modules ?? []).reduce((sum, m) => sum + (m.lessons?.length ?? 0), 0)} уроков</span>
                       <span>·</span>
                       <span>{c.students_count} студентов</span>
                     </div>
