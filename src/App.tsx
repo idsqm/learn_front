@@ -7,6 +7,7 @@ import Catalog from './pages/Catalog';
 import CoursePage from './pages/CoursePage';
 import Dashboard from './pages/Dashboard';
 import Studio from './pages/Studio';
+import BecomeAuthor from './pages/BecomeAuthor';
 import VerifyEmail from './pages/VerifyEmail';
 
 function MainContent() {
@@ -19,6 +20,7 @@ function MainContent() {
         <Route path="/categories" element={<Catalog />} />
         <Route path="/course/:id" element={<CoursePage />} />
         <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/become-author" element={<BecomeAuthor />} />
         <Route path="/verify-email" element={<VerifyEmail />} />
       </Routes>
     </div>

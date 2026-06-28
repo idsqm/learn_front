@@ -43,9 +43,10 @@ export default function Studio() {
 
   useEffect(() => {
     if (!authLoading && !isAuthenticated) navigate('/');
-  }, [authLoading, isAuthenticated, navigate]);
+    if (!authLoading && isAuthenticated && user?.role !== 'author') navigate('/become-author');
+  }, [authLoading, isAuthenticated, user?.role, navigate]);
 
-  if (authLoading || !isAuthenticated) return null;
+  if (authLoading || !isAuthenticated || user?.role !== 'author') return null;
 
   const tabs: { key: Tab; label: string }[] = [
     { key: 'courses', label: 'Курсы' },

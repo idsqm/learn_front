@@ -1,4 +1,4 @@
-import { authClient as apiClient } from '../../../shared/api/apiClient';
+import { authClient as apiClient, coursesClient } from '../../../shared/api/apiClient';
 import { AxiosError } from 'axios';
 
 export interface TokenResponse {
@@ -106,7 +106,14 @@ export const authApi = {
   async getMe(accessToken?: string) {
     try {
       const headers = accessToken ? { Authorization: `Bearer ${accessToken}` } : undefined;
-      const { data } = await apiClient.get<{ id: string; username: string; email: string }>('/auth/me', { headers });
+      const { data } = await apiClient.get<{ id: string; username: string; email: string; role: string }>('/auth/me', { headers });
+      return data;
+    } catch (err) { handleError(err); }
+  },
+
+  async applyAsAuthor(profile: { name: string; subtitle: string; bio: string; years_experience: number }) {
+    try {
+      const { data } = await coursesClient.post<{ message: string }>('/authors/apply', profile);
       return data;
     } catch (err) { handleError(err); }
   },

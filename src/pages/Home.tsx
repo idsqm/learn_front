@@ -1,5 +1,8 @@
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useFeaturedCourses, useCategories } from '../features/courses/api/queries';
+import { useAuthStore } from '../features/auth/store/authStore';
+import AuthModal from '../features/auth/components/AuthModal';
 import { useReveal, useRevealChildren } from '../shared/hooks/useReveal';
 import CourseCard from '../shared/components/CourseCard';
 import Footer from '../shared/components/Footer';
@@ -7,6 +10,8 @@ import s from './Home.module.css';
 
 export default function Home() {
   const navigate = useNavigate();
+  const { isAuthenticated, user } = useAuthStore();
+  const [authMode, setAuthMode] = useState<'login' | 'register' | null>(null);
   const { data: featuredData } = useFeaturedCourses();
   const { data: categoriesData } = useCategories();
 
@@ -18,7 +23,17 @@ export default function Home() {
   const bandRef = useReveal<HTMLDivElement>();
   const bandStatsRef = useRevealChildren<HTMLDivElement>(100);
 
+  const handleAuthorClick = () => {
+    if (!isAuthenticated) {
+      setAuthMode('login');
+      return;
+    }
+
+    navigate(user?.role === 'author' ? '/studio' : '/become-author');
+  };
+
   return (
+    <>
     <main>
       <section className={s.heroSection}>
         <div className={`${s.heroGrid} lq-hero`}>
@@ -32,7 +47,9 @@ export default function Home() {
             </p>
             <div className={s.heroButtons}>
               <button onClick={() => navigate('/catalog')} className={s.btnPrimary}>Найти курс →</button>
-              <button className={s.btnSecondary}>Стать автором</button>
+              <button onClick={handleAuthorClick} className={s.btnSecondary}>
+                {user?.role === 'author' ? 'Перейти в студию' : 'Стать автором'}
+              </button>
             </div>
             <div className={`${s.statsRow} lq-hero-stats`}>
               <div><span className={s.statValue}>48 000+</span>учеников</div>
@@ -124,5 +141,13 @@ export default function Home() {
 
       <Footer />
     </main>
+    {authMode && (
+      <AuthModal
+        mode={authMode}
+        onClose={() => setAuthMode(null)}
+        onSwitch={() => setAuthMode(authMode === 'login' ? 'register' : 'login')}
+      />
+    )}
+    </>
   );
 }

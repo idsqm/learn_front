@@ -76,11 +76,18 @@ export default function Header() {
                       <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#6b6a76" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"><path d="M22 10 12 5 2 10l10 5 10-5Z" /><path d="M6 12v5c0 1 2.7 2.5 6 2.5s6-1.5 6-2.5v-5" /></svg>
                       <span>ЛК ученика</span>
                     </button>
-                    <button className={s.menuItem} onClick={() => { setMenuOpen(false); navigate('/studio'); }}>
-                      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#6b6a76" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"><path d="M3 4h18" /><path d="M4 4v10h16V4" /><path d="M12 14v4" /><path d="M9 21l3-3 3 3" /></svg>
-                      <span style={{ flex: 1 }}>Кабинет учителя</span>
-                      <span className={s.studioBadge}>СТУДИЯ</span>
-                    </button>
+                    {user?.role === 'author' ? (
+                      <button className={s.menuItem} onClick={() => { setMenuOpen(false); navigate('/studio'); }}>
+                        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#6b6a76" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"><path d="M3 4h18" /><path d="M4 4v10h16V4" /><path d="M12 14v4" /><path d="M9 21l3-3 3 3" /></svg>
+                        <span style={{ flex: 1 }}>Кабинет учителя</span>
+                        <span className={s.studioBadge}>СТУДИЯ</span>
+                      </button>
+                    ) : (
+                      <button className={s.menuItem} onClick={() => { setMenuOpen(false); navigate('/become-author'); }}>
+                        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#6b6a76" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 1 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+                        <span>Стать автором</span>
+                      </button>
+                    )}
                     <div className={s.menuDivider} />
                     <button className={s.menuItemLogout} onClick={() => { setMenuOpen(false); logout(); }}>
                       <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" /><path d="M16 17l5-5-5-5" /><path d="M21 12H9" /></svg>

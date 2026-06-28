@@ -4,6 +4,7 @@ import { authApi } from '../api/authApi';
 interface User {
   username: string;
   email: string;
+  role: 'student' | 'author';
 }
 
 interface AuthState {
@@ -17,6 +18,7 @@ interface AuthState {
   register: (username: string, email: string, password: string) => Promise<string>;
   logout: () => void;
   getAccessToken: () => Promise<string | null>;
+  fetchUser: () => Promise<void>;
   initialize: () => void;
 }
 
@@ -36,7 +38,7 @@ function tokenExpiresIn(token: string): number {
 
 async function fetchUser(accessToken?: string): Promise<User> {
   const me = await authApi.getMe(accessToken);
-  return { username: me.username, email: me.email };
+  return { username: me.username, email: me.email, role: (me.role === 'author' ? 'author' : 'student') };
 }
 
 function saveToStorage(accessToken: string, refreshToken: string, user: User) {
@@ -144,6 +146,13 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       refreshToken: null,
       isAuthenticated: false,
     });
+  },
+
+  fetchUser: async () => {
+    const user = await fetchUser();
+    const { accessToken, refreshToken } = get();
+    set({ user });
+    if (accessToken && refreshToken) saveToStorage(accessToken, refreshToken, user);
   },
 
   getAccessToken: async () => {
