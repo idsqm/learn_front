@@ -1,0 +1,511 @@
+/* ── New Course Wizard ── */
+
+.wrap {
+  padding: 34px 24px 64px;
+  max-width: 1180px;
+  margin: 0 auto;
+}
+
+/* ── Breadcrumb ── */
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font: 400 13px 'Geist', sans-serif;
+  color: #8e8d99;
+  margin-bottom: 24px;
+}
+
+.breadcrumbLink {
+  color: #5d4ee6;
+  cursor: pointer;
+  font-weight: 500;
+}
+.breadcrumbLink:hover {
+  text-decoration: underline;
+}
+
+.breadcrumbSep {
+  color: #c4c3ce;
+}
+
+.breadcrumbCurrent {
+  color: #3a3942;
+  font-weight: 500;
+}
+
+.title {
+  font: 700 26px 'Geist', sans-serif;
+  letter-spacing: -.025em;
+  margin: 0 0 8px;
+}
+
+.subtitle {
+  font: 400 14.5px 'Geist', sans-serif;
+  color: #8e8d99;
+  margin: 0 0 28px;
+}
+
+/* ── Steps indicator ── */
+.steps {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  margin-bottom: 36px;
+}
+
+.stepItem {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: default;
+}
+
+.stepCircle {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font: 600 13px 'Geist', sans-serif;
+  flex: none;
+  transition: background .2s, color .2s, border-color .2s;
+}
+
+.stepCircleActive {
+  composes: stepCircle;
+  background: #5d4ee6;
+  color: #fff;
+  border: 2px solid #5d4ee6;
+}
+
+.stepCircleDone {
+  composes: stepCircle;
+  background: #eefaf2;
+  color: #178a5a;
+  border: 2px solid #b7e3cb;
+}
+
+.stepCircleInactive {
+  composes: stepCircle;
+  background: #f4f4f8;
+  color: #9a99a6;
+  border: 2px solid #e7e7ef;
+}
+
+.stepLabel {
+  font: 500 13px 'Geist', sans-serif;
+  color: #8e8d99;
+  transition: color .2s;
+}
+
+.stepLabelActive {
+  composes: stepLabel;
+  color: #18171f;
+  font-weight: 600;
+}
+
+.stepLine {
+  width: 48px;
+  height: 2px;
+  background: #e7e7ef;
+  margin: 0 14px;
+  flex: none;
+  transition: background .2s;
+}
+
+.stepLineDone {
+  composes: stepLine;
+  background: #b7e3cb;
+}
+
+/* ── Layout: main + sidebar ── */
+.layout {
+  display: grid;
+  grid-template-columns: 1fr 340px;
+  gap: 24px;
+  align-items: start;
+}
+
+/* ── Card ── */
+.card {
+  border: 1px solid #e7e7ef;
+  border-radius: 14px;
+  background: #fff;
+  padding: 24px;
+  margin-bottom: 20px;
+}
+
+.cardTitle {
+  font: 700 17px 'Geist', sans-serif;
+  letter-spacing: -.02em;
+  margin: 0 0 20px;
+}
+
+/* ── Fields ── */
+.fieldGroup {
+  margin-bottom: 18px;
+}
+.fieldGroup:last-child {
+  margin-bottom: 0;
+}
+
+.label {
+  display: block;
+  font: 600 12px 'Geist', sans-serif;
+  color: #3a3942;
+  margin-bottom: 7px;
+}
+
+.input {
+  width: 100%;
+  height: 42px;
+  padding: 0 14px;
+  border: 1px solid #d7d7e2;
+  border-radius: 10px;
+  background: #fff;
+  font: 400 14px 'Geist', sans-serif;
+  color: #18171f;
+  outline: none;
+  transition: border-color .15s, box-shadow .15s;
+}
+.input:focus {
+  border-color: #5d4ee6;
+  box-shadow: 0 0 0 3px #efedfe;
+}
+
+.select {
+  composes: input;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%239a99a6' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  padding-right: 36px;
+  cursor: pointer;
+}
+
+.textarea {
+  width: 100%;
+  min-height: 120px;
+  padding: 12px 14px;
+  border: 1px solid #d7d7e2;
+  border-radius: 10px;
+  background: #fff;
+  font: 400 14px 'Geist', sans-serif;
+  color: #18171f;
+  outline: none;
+  resize: vertical;
+  transition: border-color .15s, box-shadow .15s;
+}
+.textarea:focus {
+  border-color: #5d4ee6;
+  box-shadow: 0 0 0 3px #efedfe;
+}
+
+/* ── Step 2: module cards ── */
+.moduleCard {
+  border: 1px solid #e7e7ef;
+  border-radius: 14px;
+  background: #fff;
+  margin-bottom: 14px;
+  overflow: hidden;
+}
+
+.moduleHeader {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 18px;
+}
+
+.moduleTitle {
+  flex: 1;
+  font: 600 15px 'Geist', sans-serif;
+  letter-spacing: -.01em;
+}
+
+.moduleTitleInput {
+  flex: 1;
+  height: 36px;
+  padding: 0 12px;
+  border: 1px solid #d7d7e2;
+  border-radius: 8px;
+  background: #fff;
+  font: 600 14px 'Geist', sans-serif;
+  color: #18171f;
+  outline: none;
+}
+.moduleTitleInput:focus {
+  border-color: #5d4ee6;
+  box-shadow: 0 0 0 3px #efedfe;
+}
+
+.moduleLessons {
+  font: 400 12.5px 'Geist Mono', monospace;
+  color: #9a99a6;
+  flex: none;
+}
+
+.removeModuleBtn {
+  flex: none;
+  width: 28px;
+  height: 28px;
+  border-radius: 7px;
+  border: none;
+  background: none;
+  color: #c4c3ce;
+  font-size: 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background .15s, color .15s;
+}
+.removeModuleBtn:hover {
+  background: #fef2f2;
+  color: #c2562f;
+}
+
+/* Lesson rows in wizard */
+.lessonRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 18px 12px 42px;
+  border-top: 1px solid #f0f0f5;
+}
+
+.typeIcon {
+  flex: none;
+  width: 28px;
+  height: 28px;
+  border-radius: 7px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font: 600 13px 'Geist', sans-serif;
+}
+
+.typeVideo {
+  composes: typeIcon;
+  background: #5d4ee61a;
+  color: #5d4ee6;
+}
+
+.typeQuiz {
+  composes: typeIcon;
+  background: #e0568f1a;
+  color: #e0568f;
+}
+
+.typeText {
+  composes: typeIcon;
+  background: #149c951a;
+  color: #149c95;
+}
+
+.lessonName {
+  flex: 1;
+  font: 500 14px 'Geist', sans-serif;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.removeLessonBtn {
+  composes: removeModuleBtn;
+}
+
+.addLessonFooter {
+  padding: 12px 18px 14px 42px;
+  border-top: 1px solid #f0f0f5;
+}
+
+.addLessonLink {
+  font: 600 13px 'Geist', sans-serif;
+  color: #5d4ee6;
+  cursor: pointer;
+}
+.addLessonLink:hover {
+  color: #4d3ed6;
+}
+
+.addModuleBtn {
+  width: 100%;
+  height: 52px;
+  border: 2px dashed #d7d7e2;
+  border-radius: 14px;
+  background: none;
+  font: 600 14px 'Geist', sans-serif;
+  color: #8e8d99;
+  cursor: pointer;
+  transition: border-color .15s, color .15s, background .15s;
+}
+.addModuleBtn:hover {
+  border-color: #c9c3f7;
+  color: #5d4ee6;
+  background: #faf9ff;
+}
+
+/* ── Step 3: Price ── */
+.toggleRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.toggle {
+  width: 44px;
+  height: 24px;
+  border-radius: 12px;
+  border: none;
+  padding: 2px;
+  cursor: pointer;
+  transition: background .2s;
+  flex: none;
+  display: flex;
+  align-items: center;
+}
+
+.toggleOn {
+  composes: toggle;
+  background: #5d4ee6;
+  justify-content: flex-end;
+}
+
+.toggleOff {
+  composes: toggle;
+  background: #d7d7e2;
+  justify-content: flex-start;
+}
+
+.toggleDot {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, .15);
+  transition: transform .2s;
+}
+
+.toggleLabel {
+  font: 500 14px 'Geist', sans-serif;
+  color: #3a3942;
+}
+
+.priceRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+/* ── Sidebar ── */
+.sidebar {
+  position: sticky;
+  top: 80px;
+}
+
+.previewCard {
+  border: 1px solid #e7e7ef;
+  border-radius: 14px;
+  background: #fff;
+  padding: 20px;
+  margin-bottom: 16px;
+}
+
+.previewTitle {
+  font: 700 16px 'Geist', sans-serif;
+  letter-spacing: -.01em;
+  margin: 0 0 10px;
+}
+
+.previewLabel {
+  font: 400 12px 'Geist Mono', monospace;
+  color: #9a99a6;
+  margin-bottom: 4px;
+}
+
+.previewValue {
+  font: 500 14px 'Geist', sans-serif;
+  color: #3a3942;
+  margin-bottom: 12px;
+}
+
+.previewValue:last-child {
+  margin-bottom: 0;
+}
+
+.previewCover {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #6a5cf0, #9183f7);
+  margin-bottom: 14px;
+}
+
+.navBtns {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.nextBtn {
+  width: 100%;
+  height: 46px;
+  border: none;
+  border-radius: 10px;
+  background: #5d4ee6;
+  color: #fff;
+  font: 600 14px 'Geist', sans-serif;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(93, 78, 230, .3);
+  transition: background .2s, transform .15s;
+}
+.nextBtn:hover {
+  background: #4d3ed6;
+  transform: translateY(-1px);
+}
+
+.backBtn {
+  width: 100%;
+  height: 46px;
+  border: 1px solid #d7d7e2;
+  border-radius: 10px;
+  background: #fff;
+  font: 600 14px 'Geist', sans-serif;
+  color: #3a3942;
+  cursor: pointer;
+  transition: border-color .15s, background .15s;
+}
+.backBtn:hover {
+  border-color: #c9c3f7;
+  background: #faf9ff;
+}
+
+/* ── Responsive ── */
+@media (max-width: 900px) {
+  .layout {
+    grid-template-columns: 1fr;
+  }
+  .sidebar {
+    position: static;
+  }
+}
+
+@media (max-width: 680px) {
+  .steps {
+    gap: 0;
+  }
+  .stepLabel,
+  .stepLabelActive {
+    display: none;
+  }
+  .stepLine {
+    width: 32px;
+    margin: 0 8px;
+  }
+}

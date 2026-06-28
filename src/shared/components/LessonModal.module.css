@@ -1,0 +1,435 @@
+/* ── Lesson Modal ── */
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  background: rgba(20, 19, 26, 0.55);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 48px 20px;
+  overflow: auto;
+  animation: overlayIn .25s ease-out;
+}
+
+.modal {
+  position: relative;
+  width: 100%;
+  max-width: 520px;
+  background: #fff;
+  border: 1px solid #e7e7ef;
+  border-radius: 20px;
+  box-shadow: 0 30px 70px rgba(20, 19, 26, 0.35);
+  padding: 0;
+  animation: modalIn .35s cubic-bezier(.22, 1, .36, 1);
+}
+
+@keyframes overlayIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes modalIn {
+  from { opacity: 0; transform: translateY(24px) scale(.96); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* ── Header ── */
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 22px 24px 0;
+}
+
+.headerTitle {
+  font: 700 20px 'Geist', sans-serif;
+  letter-spacing: -.02em;
+  margin: 0;
+}
+
+.closeBtn {
+  width: 32px;
+  height: 32px;
+  border: none;
+  border-radius: 9px;
+  background: #f4f4f8;
+  color: #5c5b67;
+  font: 400 17px/1 'Geist', sans-serif;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background .15s, color .15s;
+}
+.closeBtn:hover {
+  background: #ebebf2;
+  color: #18171f;
+}
+
+/* ── Body ── */
+.body {
+  padding: 20px 24px;
+}
+
+/* ── Type picker ── */
+.typePicker {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.typeCard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 16px 12px;
+  border: 2px solid #e7e7ef;
+  border-radius: 12px;
+  background: #fff;
+  cursor: pointer;
+  transition: border-color .15s, background .15s;
+}
+.typeCard:hover {
+  border-color: #c9c3f7;
+  background: #faf9ff;
+}
+
+.typeCardActive {
+  composes: typeCard;
+  border-color: #5d4ee6;
+  background: #f8f7ff;
+}
+
+.typeCardIcon {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font: 600 18px 'Geist', sans-serif;
+}
+
+.typeCardIconVideo {
+  composes: typeCardIcon;
+  background: #5d4ee61a;
+  color: #5d4ee6;
+}
+
+.typeCardIconQuiz {
+  composes: typeCardIcon;
+  background: #e0568f1a;
+  color: #e0568f;
+}
+
+.typeCardIconText {
+  composes: typeCardIcon;
+  background: #149c951a;
+  color: #149c95;
+}
+
+.typeCardLabel {
+  font: 600 13px 'Geist', sans-serif;
+  color: #3a3942;
+}
+
+/* ── Fields ── */
+.fieldGroup {
+  margin-bottom: 18px;
+}
+
+.label {
+  display: block;
+  font: 600 12px 'Geist', sans-serif;
+  color: #3a3942;
+  margin-bottom: 7px;
+}
+
+.input {
+  width: 100%;
+  height: 42px;
+  padding: 0 14px;
+  border: 1px solid #d7d7e2;
+  border-radius: 10px;
+  background: #fff;
+  font: 400 14px 'Geist', sans-serif;
+  color: #18171f;
+  outline: none;
+  transition: border-color .15s, box-shadow .15s;
+}
+.input:focus {
+  border-color: #5d4ee6;
+  box-shadow: 0 0 0 3px #efedfe;
+}
+
+/* ── Upload zone ── */
+.uploadZone {
+  width: 100%;
+  min-height: 120px;
+  border: 2px dashed #d7d7e2;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 24px;
+  cursor: pointer;
+  transition: border-color .15s, background .15s;
+}
+.uploadZone:hover {
+  border-color: #c9c3f7;
+  background: #faf9ff;
+}
+
+.uploadIcon {
+  color: #c4c3ce;
+}
+
+.uploadText {
+  font: 400 13px 'Geist', sans-serif;
+  color: #9a99a6;
+  text-align: center;
+}
+
+.uploadTextAccent {
+  color: #5d4ee6;
+  font-weight: 600;
+}
+
+/* ── Attach zone ── */
+.attachZone {
+  width: 100%;
+  height: 48px;
+  border: 1px dashed #d7d7e2;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: border-color .15s, background .15s;
+}
+.attachZone:hover {
+  border-color: #c9c3f7;
+  background: #faf9ff;
+}
+
+.attachText {
+  font: 500 13px 'Geist', sans-serif;
+  color: #9a99a6;
+}
+
+/* ── Footer ── */
+.footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  padding: 16px 24px 22px;
+  border-top: 1px solid #f0f0f5;
+}
+
+.cancelBtn {
+  height: 42px;
+  padding: 0 20px;
+  border: 1px solid #d7d7e2;
+  border-radius: 10px;
+  background: #fff;
+  font: 600 14px 'Geist', sans-serif;
+  color: #3a3942;
+  cursor: pointer;
+  transition: border-color .15s, background .15s;
+}
+.cancelBtn:hover {
+  border-color: #c9c3f7;
+  background: #faf9ff;
+}
+
+.submitBtn {
+  height: 42px;
+  padding: 0 20px;
+  border: none;
+  border-radius: 10px;
+  background: #5d4ee6;
+  color: #fff;
+  font: 600 14px 'Geist', sans-serif;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(93, 78, 230, .3);
+  transition: background .2s, transform .15s;
+}
+.submitBtn:hover {
+  background: #4d3ed6;
+  transform: translateY(-1px);
+}
+.submitBtn:disabled {
+  background: #9183f7;
+  cursor: default;
+  opacity: 0.7;
+  transform: none;
+}
+
+/* ── Textarea ── */
+.textarea {
+  width: 100%;
+  min-height: 160px;
+  padding: 12px 14px;
+  border: 1px solid #d7d7e2;
+  border-radius: 10px;
+  background: #fff;
+  font: 400 14px/1.6 'Geist', sans-serif;
+  color: #18171f;
+  outline: none;
+  resize: vertical;
+  transition: border-color .15s, box-shadow .15s;
+}
+.textarea:focus {
+  border-color: #5d4ee6;
+  box-shadow: 0 0 0 3px #efedfe;
+}
+
+/* ── Quiz builder ── */
+.questionCard {
+  border: 1px solid #e7e7ef;
+  border-radius: 12px;
+  background: #fff;
+  padding: 16px;
+  margin-bottom: 12px;
+}
+
+.questionHeader {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.questionNumber {
+  flex: none;
+  width: 26px;
+  height: 26px;
+  border-radius: 7px;
+  background: #efedfe;
+  color: #5d4ee6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font: 600 12px 'Geist Mono', monospace;
+}
+
+.questionInput {
+  composes: input;
+  height: 38px;
+  font-size: 13.5px;
+}
+
+.removeBtn {
+  flex: none;
+  width: 28px;
+  height: 28px;
+  border: none;
+  border-radius: 7px;
+  background: none;
+  color: #b4b3bf;
+  font: 400 16px/1 'Geist', sans-serif;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.removeBtn:hover {
+  background: #fef2f2;
+  color: #c2562f;
+}
+
+.optionRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+  padding-left: 36px;
+}
+
+.optionRadio {
+  flex: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 2px solid #d7d7e2;
+  cursor: pointer;
+  transition: border-color .15s;
+}
+
+.optionRadioCorrect {
+  composes: optionRadio;
+  border-color: #5d4ee6;
+  background: #5d4ee6;
+  box-shadow: inset 0 0 0 2.5px #fff;
+}
+
+.optionInput {
+  flex: 1;
+  height: 34px;
+  padding: 0 10px;
+  border: 1px solid #e7e7ef;
+  border-radius: 8px;
+  background: #fff;
+  font: 400 13px 'Geist', sans-serif;
+  color: #18171f;
+  outline: none;
+}
+.optionInput:focus {
+  border-color: #5d4ee6;
+}
+
+.addOptionBtn {
+  padding-left: 36px;
+  margin-bottom: 4px;
+}
+
+.addLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font: 500 12.5px 'Geist', sans-serif;
+  color: #5d4ee6;
+  cursor: pointer;
+  border: none;
+  background: none;
+  padding: 4px 0;
+}
+.addLink:hover {
+  opacity: .8;
+}
+
+.addQuestionBtn {
+  width: 100%;
+  height: 42px;
+  border: 1px dashed #d7d7e2;
+  border-radius: 10px;
+  background: #fff;
+  color: #5d4ee6;
+  font: 600 13px 'Geist', sans-serif;
+  cursor: pointer;
+  transition: border-color .15s, background .15s;
+}
+.addQuestionBtn:hover {
+  border-color: #c9c3f7;
+  background: #faf9ff;
+}
+
+/* ── Responsive ── */
+@media (max-width: 560px) {
+  .modal {
+    max-width: 100%;
+    margin: 0 4px;
+  }
+  .typePicker {
+    grid-template-columns: 1fr;
+  }
+}

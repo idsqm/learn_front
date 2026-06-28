@@ -520,7 +520,7 @@
   .headerInner { gap: 14px; }
   .nav { display: none; }
   .previewBtn { display: none; }
-  .burger { display: flex; }
+  .burger { display: flex; flex-direction: column; }
   .pageHeader { flex-direction: column; align-items: stretch; }
   .courseAction { display: none; }
   .statsGrid { grid-template-columns: 1fr; }
