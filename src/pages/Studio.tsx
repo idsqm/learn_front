@@ -1,57 +1,32 @@
-import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuthStore } from '../features/auth/store/authStore';
-import { useStudioCourses, useStudioStats, useCreateCourse, useCreateModule, useCreateLesson } from '../features/studio/api/queries';
-import type { StudioCourse } from '../features/studio/types';
+import { useStudioCourses, useStudioStats, useCreateCourse, useCreateModule, useCreateLesson, useUpdateLesson } from '../features/studio/api/queries';
 import LogoIcon from '../shared/components/LogoIcon';
 import LessonModal from '../shared/components/LessonModal';
-import type { LessonPayload } from '../shared/components/LessonModal';
+import type { LessonPayload, LessonEditData } from '../shared/components/LessonModal';
 import CourseEditor from './CourseEditor';
 import type { EditorCourse, EditorLesson } from './CourseEditor';
 import NewCourse from './NewCourse';
 import s from './Studio.module.css';
 
 type Tab = 'courses' | 'students' | 'income' | 'reviews';
-type View = 'list' | 'editor' | 'new';
-
-function studioToEditor(sc: StudioCourse): EditorCourse {
-  return {
-    id: sc.id,
-    title: sc.title,
-    subtitle: sc.subtitle,
-    category: sc.category,
-    level: sc.level,
-    price: sc.price,
-    old_price: sc.old_price,
-    is_free: sc.is_free,
-    status: sc.status,
-    modules: (sc.modules ?? []).map(m => ({
-      id: m.id,
-      title: m.title,
-      lessons: (m.lessons ?? []).map(l => ({
-        id: l.id,
-        name: l.name,
-        type: l.type,
-        duration: l.duration,
-        is_free: l.is_free,
-        status: l.status,
-      })),
-    })),
-  };
-}
 
 export default function Studio() {
   const navigate = useNavigate();
-  const { isAuthenticated, user, logout } = useAuthStore();
+  const { pathname } = useLocation();
+  const { isAuthenticated, loading: authLoading, user, logout } = useAuthStore();
   const [tab, setTab] = useState<Tab>('courses');
   const [menuOpen, setMenuOpen] = useState(false);
   const [burgerOpen, setBurgerOpen] = useState(false);
 
-  const [view, setView] = useState<View>('list');
-  const [editingCourseId, setEditingCourseId] = useState<string | null>(null);
+  const isNewCourse = pathname === '/studio/courses/new';
+  const courseIdMatch = pathname.match(/^\/studio\/courses\/([^/]+)$/);
+  const editingCourseId = (!isNewCourse && courseIdMatch) ? courseIdMatch[1] : null;
 
   const [lessonModalModuleId, setLessonModalModuleId] = useState<string | null>(null);
   const [lessonModalCourseId, setLessonModalCourseId] = useState<string | null>(null);
+  const [editingLesson, setEditingLesson] = useState<LessonEditData | null>(null);
   const [pendingLessons, setPendingLessons] = useState<Map<string, EditorLesson[]>>(new Map());
 
   const { data: coursesData, isLoading: coursesLoading } = useStudioCourses();
@@ -59,6 +34,7 @@ export default function Studio() {
   const createCourseMut = useCreateCourse();
   const createModuleMut = useCreateModule();
   const createLessonMut = useCreateLesson();
+  const updateLessonMut = useUpdateLesson();
 
   const courses = coursesData?.data ?? [];
 
@@ -66,10 +42,10 @@ export default function Studio() {
   const displayName = user?.username || 'Автор';
 
   useEffect(() => {
-    if (!isAuthenticated) navigate('/');
-  }, [isAuthenticated, navigate]);
+    if (!authLoading && !isAuthenticated) navigate('/');
+  }, [authLoading, isAuthenticated, navigate]);
 
-  if (!isAuthenticated) return null;
+  if (authLoading || !isAuthenticated) return null;
 
   const tabs: { key: Tab; label: string }[] = [
     { key: 'courses', label: 'Курсы' },
@@ -79,8 +55,7 @@ export default function Studio() {
   ];
 
   const handleOpenEditor = (courseId: string) => {
-    setEditingCourseId(courseId);
-    setView('editor');
+    navigate(`/studio/courses/${courseId}`);
   };
 
   const handleCreate = async (course: EditorCourse) => {
@@ -88,7 +63,7 @@ export default function Studio() {
       const created = await createCourseMut.mutateAsync({
         title: course.title,
         subtitle: course.subtitle,
-        category: course.category,
+        category_id: course.category_id,
         level: course.level,
         description: '',
         price: course.price,
@@ -110,62 +85,79 @@ export default function Studio() {
       // API not available yet — keep local
     }
     setPendingLessons(new Map());
-    setView('list');
+    navigate('/studio');
   };
 
   const handleOpenLessonModal = (moduleId: string) => {
+    setEditingLesson(null);
     setLessonModalModuleId(moduleId);
     setLessonModalCourseId(editingCourseId);
   };
 
-  const handleAddLesson = async (lesson: LessonPayload) => {
-    if (!lessonModalModuleId) return;
+  const handleEditLessonModal = (lesson: LessonEditData) => {
+    setEditingLesson(lesson);
+    setLessonModalModuleId('__edit__');
+    setLessonModalCourseId(editingCourseId);
+  };
 
-    const newLesson: EditorLesson = {
-      id: 'ls_' + Date.now(),
-      name: lesson.name,
-      type: lesson.type,
-      duration: '—',
-      is_free: false,
-      status: 'draft',
-    };
-
-    if (view === 'new') {
-      setPendingLessons(prev => {
-        const next = new Map(prev);
-        const arr = next.get(lessonModalModuleId) ?? [];
-        next.set(lessonModalModuleId, [...arr, newLesson]);
-        return next;
-      });
-    } else if (view === 'editor' && lessonModalCourseId) {
+  const handleLessonSubmit = async (lesson: LessonPayload) => {
+    if (editingLesson && lessonModalCourseId) {
       try {
-        await createLessonMut.mutateAsync({
+        await updateLessonMut.mutateAsync({
           courseId: lessonModalCourseId,
-          moduleId: lessonModalModuleId,
-          payload: { name: lesson.name, type: lesson.type },
+          lessonId: editingLesson.id,
+          payload: { name: lesson.name, type: lesson.type, is_free: lesson.is_free },
         });
-      } catch {
-        // API not available
+      } catch { /* */ }
+    } else if (lessonModalModuleId) {
+      const newLesson: EditorLesson = {
+        id: 'ls_' + Date.now(),
+        name: lesson.name,
+        type: lesson.type,
+        duration: '—',
+        is_free: lesson.is_free ?? false,
+        status: 'draft',
+      };
+
+      if (isNewCourse) {
+        setPendingLessons(prev => {
+          const next = new Map(prev);
+          const arr = next.get(lessonModalModuleId) ?? [];
+          next.set(lessonModalModuleId, [...arr, newLesson]);
+          return next;
+        });
+      } else if (editingCourseId && lessonModalCourseId) {
+        try {
+          await createLessonMut.mutateAsync({
+            courseId: lessonModalCourseId,
+            moduleId: lessonModalModuleId,
+            payload: { name: lesson.name, type: lesson.type, is_free: lesson.is_free },
+          });
+        } catch { /* */ }
       }
     }
 
     setLessonModalModuleId(null);
     setLessonModalCourseId(null);
+    setEditingLesson(null);
+  };
+
+  const closeLessonModal = () => {
+    setLessonModalModuleId(null);
+    setLessonModalCourseId(null);
+    setEditingLesson(null);
   };
 
   const handleBackToList = () => {
-    setView('list');
-    setEditingCourseId(null);
     setPendingLessons(new Map());
+    navigate('/studio');
   };
-
-  const editingCourse = editingCourseId ? courses.find(c => c.id === editingCourseId) : null;
 
   const fmtCurrency = (v: number) => '₽' + v.toLocaleString('ru-RU');
 
   const renderContent = () => {
     if (tab !== 'courses') {
-      const sections: Record<string, { title: string; sub: string; icon: JSX.Element }> = {
+      const sections: Record<string, { title: string; sub: string; icon: React.ReactNode }> = {
         students: {
           title: 'Студенты',
           sub: 'Прогресс по всем вашим курсам.',
@@ -196,7 +188,7 @@ export default function Studio() {
       );
     }
 
-    if (view === 'new') {
+    if (isNewCourse) {
       return (
         <NewCourse
           onBack={handleBackToList}
@@ -207,13 +199,13 @@ export default function Studio() {
       );
     }
 
-    if (view === 'editor' && editingCourse) {
+    if (editingCourseId) {
       return (
         <CourseEditor
-          course={studioToEditor(editingCourse)}
-          onChange={() => {}}
+          courseId={editingCourseId}
           onBack={handleBackToList}
           onOpenLessonModal={handleOpenLessonModal}
+          onEditLesson={handleEditLessonModal}
         />
       );
     }
@@ -225,7 +217,7 @@ export default function Studio() {
             <h1 className={s.pageTitle}>Здравствуйте, {displayName}</h1>
             <p className={s.pageSubtitle}>Управляйте своими курсами и отслеживайте результаты.</p>
           </div>
-          <button className={s.newCourseBtn} onClick={() => setView('new')}>＋ Новый курс</button>
+          <button className={s.newCourseBtn} onClick={() => navigate('/studio/courses/new')}>＋ Новый курс</button>
         </div>
 
         {statsData && (
@@ -255,7 +247,7 @@ export default function Studio() {
             </div>
             <div className={s.emptyTitle}>У вас пока нет курсов</div>
             <p className={s.emptyText}>Создайте свой первый курс — загружайте уроки, устанавливайте цену и получайте до 70% с каждой продажи.</p>
-            <button className={s.newCourseBtn} style={{ marginTop: 8 }} onClick={() => setView('new')}>＋ Создать первый курс</button>
+            <button className={s.newCourseBtn} style={{ marginTop: 8 }} onClick={() => navigate('/studio/courses/new')}>＋ Создать первый курс</button>
           </div>
         ) : (
           <>
@@ -311,7 +303,7 @@ export default function Studio() {
               <a
                 key={t.key}
                 className={tab === t.key ? s.navLinkActive : s.navLink}
-                onClick={() => { setTab(t.key); if (t.key === 'courses') setView('list'); }}
+                onClick={() => { setTab(t.key); if (t.key === 'courses') navigate('/studio'); }}
               >
                 {t.label}
               </a>
@@ -364,7 +356,7 @@ export default function Studio() {
                 <a
                   key={t.key}
                   className={tab === t.key ? s.burgerItemActive : s.burgerItem}
-                  onClick={() => { setTab(t.key); setBurgerOpen(false); if (t.key === 'courses') setView('list'); }}
+                  onClick={() => { setTab(t.key); setBurgerOpen(false); if (t.key === 'courses') navigate('/studio'); }}
                 >
                   {t.label}
                 </a>
@@ -382,8 +374,9 @@ export default function Studio() {
 
       {lessonModalModuleId && (
         <LessonModal
-          onClose={() => { setLessonModalModuleId(null); setLessonModalCourseId(null); }}
-          onAdd={handleAddLesson}
+          onClose={closeLessonModal}
+          onAdd={handleLessonSubmit}
+          editData={editingLesson ?? undefined}
         />
       )}
     </div>

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useCategories } from '../features/studio/api/queries';
 import type { EditorCourse, EditorModule, EditorLesson } from './CourseEditor';
 import s from './NewCourse.module.css';
 
@@ -8,15 +9,6 @@ interface Props {
   onOpenLessonModal: (moduleId: string) => void;
   pendingLessons: Map<string, EditorLesson[]>;
 }
-
-const CATEGORIES = [
-  'Разработка',
-  'Дизайн',
-  'Маркетинг',
-  'Аналитика',
-  'Бизнес',
-  'Личное развитие',
-];
 
 const LEVELS = [
   'Начинающий',
@@ -31,12 +23,15 @@ const TYPE_ICONS: Record<EditorLesson['type'], { label: string; cls: string }> =
 };
 
 export default function NewCourse({ onBack, onCreate, onOpenLessonModal, pendingLessons }: Props) {
+  const { data: categoriesData } = useCategories();
+  const categories = categoriesData?.data ?? [];
+
   const [step, setStep] = useState(1);
 
   /* Step 1 */
   const [title, setTitle] = useState('');
   const [subtitle, setSubtitle] = useState('');
-  const [category, setCategory] = useState('');
+  const [categoryId, setCategoryId] = useState<number>(0);
   const [level, setLevel] = useState('');
   const [description, setDescription] = useState('');
 
@@ -85,11 +80,13 @@ export default function NewCourse({ onBack, onCreate, onOpenLessonModal, pending
 
   const handleCreate = () => {
     const finalModules = getModulesWithPending();
+    const selectedCategory = categories.find(c => c.id === categoryId);
     const course: EditorCourse = {
       id: 'c_' + Date.now(),
       title: title || 'Без названия',
       subtitle,
-      category,
+      category: selectedCategory?.name ?? '',
+      category_id: categoryId,
       level,
       price: isFree ? 0 : price,
       old_price: isFree ? null : oldPrice,
@@ -179,11 +176,11 @@ export default function NewCourse({ onBack, onCreate, onOpenLessonModal, pending
                 <label className={s.label}>Категория</label>
                 <select
                   className={s.select}
-                  value={category}
-                  onChange={e => setCategory(e.target.value)}
+                  value={categoryId || ''}
+                  onChange={e => setCategoryId(Number(e.target.value))}
                 >
                   <option value="">Выберите категорию</option>
-                  {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
+                  {categories.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
                 </select>
               </div>
 
@@ -327,10 +324,10 @@ export default function NewCourse({ onBack, onCreate, onOpenLessonModal, pending
             <div className={s.previewCover} />
             <div className={s.previewLabel}>Название</div>
             <div className={s.previewValue}>{title || 'Без названия'}</div>
-            {category && (
+            {categoryId > 0 && (
               <>
                 <div className={s.previewLabel}>Категория</div>
-                <div className={s.previewValue}>{category}</div>
+                <div className={s.previewValue}>{categories.find(c => c.id === categoryId)?.name}</div>
               </>
             )}
             <div className={s.previewLabel}>Цена</div>

@@ -1,10 +1,18 @@
 import { coursesClient as api } from '../../../shared/api/apiClient';
-import type { StudioCourse, StudioStats, StudioStudent, StudioIncome, StudioPayout, StudioReview } from '../types';
+import type { StudioCourse, StudioModule, StudioStats, StudioStudent, StudioIncome, StudioPayout, StudioReview } from '../types';
+
+export interface Category {
+  id: number;
+  name: string;
+  abbreviation: string;
+  courses_count: number;
+  color: string;
+}
 
 export interface CreateCoursePayload {
   title: string;
   subtitle: string;
-  category: string;
+  category_id: number;
   level: string;
   description: string;
   price: number;
@@ -22,10 +30,32 @@ export interface CreateLessonPayload {
   is_free?: boolean;
 }
 
+type RawCourse = Omit<StudioCourse, 'modules'> & {
+  modules?: StudioModule[];
+  curriculum?: StudioModule[];
+};
+
+function normalizeCourse(raw: RawCourse): StudioCourse {
+  return {
+    ...raw,
+    modules: raw.modules ?? raw.curriculum ?? [],
+  };
+}
+
 export const studioApi = {
-  async listCourses() {
-    const { data } = await api.get<{ data: StudioCourse[] }>('/studio/courses');
+  async listCategories() {
+    const { data } = await api.get<{ data: Category[] }>('/categories');
     return data;
+  },
+
+  async listCourses() {
+    const { data } = await api.get<{ data: RawCourse[] }>('/studio/courses');
+    return { ...data, data: data.data.map(normalizeCourse) };
+  },
+
+  async getCourse(id: string) {
+    const { data } = await api.get<RawCourse>(`/studio/courses/${id}`);
+    return normalizeCourse(data);
   },
 
   async createCourse(payload: CreateCoursePayload) {

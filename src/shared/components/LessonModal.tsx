@@ -15,11 +15,22 @@ export interface LessonPayload {
   type: LessonType;
   textContent?: string;
   questions?: QuizQuestion[];
+  is_free?: boolean;
+}
+
+export interface LessonEditData {
+  id: string;
+  name: string;
+  type: LessonType;
+  is_free: boolean;
+  textContent?: string;
+  questions?: QuizQuestion[];
 }
 
 interface Props {
   onClose: () => void;
   onAdd: (lesson: LessonPayload) => void;
+  editData?: LessonEditData;
 }
 
 const TYPES: { key: LessonType; label: string; sub: string; iconCls: string; icon: string }[] = [
@@ -44,11 +55,13 @@ function emptyQuestion(): QuizQuestion {
   };
 }
 
-export default function LessonModal({ onClose, onAdd }: Props) {
-  const [type, setType] = useState<LessonType>('video');
-  const [name, setName] = useState('');
-  const [textContent, setTextContent] = useState('');
-  const [questions, setQuestions] = useState<QuizQuestion[]>([emptyQuestion()]);
+export default function LessonModal({ onClose, onAdd, editData }: Props) {
+  const isEdit = !!editData;
+  const [type, setType] = useState<LessonType>(editData?.type ?? 'video');
+  const [name, setName] = useState(editData?.name ?? '');
+  const [isFree, setIsFree] = useState(editData?.is_free ?? false);
+  const [textContent, setTextContent] = useState(editData?.textContent ?? '');
+  const [questions, setQuestions] = useState<QuizQuestion[]>(editData?.questions ?? [emptyQuestion()]);
 
   const canSubmit = () => {
     if (!name.trim()) return false;
@@ -59,7 +72,7 @@ export default function LessonModal({ onClose, onAdd }: Props) {
 
   const handleSubmit = () => {
     if (!canSubmit()) return;
-    const payload: LessonPayload = { name: name.trim(), type };
+    const payload: LessonPayload = { name: name.trim(), type, is_free: isFree };
     if (type === 'text') payload.textContent = textContent;
     if (type === 'quiz') payload.questions = questions;
     onAdd(payload);
@@ -103,7 +116,7 @@ export default function LessonModal({ onClose, onAdd }: Props) {
     <div className={s.overlay} onClick={onClose}>
       <div className={s.modal} onClick={e => e.stopPropagation()}>
         <div className={s.header}>
-          <h3 className={s.headerTitle}>Добавить урок</h3>
+          <h3 className={s.headerTitle}>{isEdit ? 'Редактировать урок' : 'Добавить урок'}</h3>
           <button className={s.closeBtn} onClick={onClose}>✕</button>
         </div>
 
@@ -134,6 +147,15 @@ export default function LessonModal({ onClose, onAdd }: Props) {
               onKeyDown={e => e.key === 'Enter' && type === 'video' && handleSubmit()}
               autoFocus
             />
+          </div>
+
+          <div className={s.fieldGroup}>
+            <label className={s.freeToggle} onClick={() => setIsFree(!isFree)}>
+              <span className={isFree ? s.checkboxChecked : s.checkboxUnchecked}>
+                {isFree ? '✓' : ''}
+              </span>
+              <span>Бесплатный урок (доступен без покупки)</span>
+            </label>
           </div>
 
           {type === 'video' && (
@@ -219,7 +241,7 @@ export default function LessonModal({ onClose, onAdd }: Props) {
 
         <div className={s.footer}>
           <button className={s.cancelBtn} onClick={onClose}>Отмена</button>
-          <button className={s.submitBtn} disabled={!canSubmit()} onClick={handleSubmit}>Добавить урок</button>
+          <button className={s.submitBtn} disabled={!canSubmit()} onClick={handleSubmit}>{isEdit ? 'Сохранить' : 'Добавить урок'}</button>
         </div>
       </div>
     </div>

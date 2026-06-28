@@ -234,15 +234,37 @@
   flex: none;
 }
 
-.addLessonLink {
-  font: 600 13px 'Geist', sans-serif;
-  color: #5d4ee6;
-  cursor: pointer;
+.editBtn {
   flex: none;
-  transition: color .15s;
+  width: 28px;
+  height: 28px;
+  border-radius: 7px;
+  border: none;
+  background: none;
+  color: #b4b3bf;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background .15s, color .15s;
 }
-.addLessonLink:hover {
-  color: #4d3ed6;
+.editBtn:hover {
+  background: #efedfe;
+  color: #5d4ee6;
+}
+
+.moduleTitleInput {
+  flex: 1;
+  height: 32px;
+  padding: 0 10px;
+  border: 1px solid #5d4ee6;
+  border-radius: 8px;
+  background: #fff;
+  font: 600 15px 'Geist', sans-serif;
+  letter-spacing: -.01em;
+  color: #18171f;
+  outline: none;
+  box-shadow: 0 0 0 3px #efedfe;
 }
 
 /* ── Lesson rows ── */

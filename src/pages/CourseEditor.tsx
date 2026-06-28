@@ -1,7 +1,18 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import {
+  useStudioCourse,
+  useCategories,
+  usePublishCourse,
+  useUnpublishCourse,
+  useCreateModule,
+  useUpdateModule,
+  useDeleteModule,
+  useDeleteLesson,
+} from '../features/studio/api/queries';
+import type { LessonEditData } from '../shared/components/LessonModal';
 import s from './CourseEditor.module.css';
 
-/* ── Types ── */
+/* ── Types (exported for NewCourse / Studio) ── */
 export interface EditorLesson {
   id: string;
   name: string;
@@ -22,6 +33,7 @@ export interface EditorCourse {
   title: string;
   subtitle: string;
   category: string;
+  category_id: number;
   level: string;
   price: number;
   old_price: number | null;
@@ -31,13 +43,24 @@ export interface EditorCourse {
 }
 
 interface Props {
-  course: EditorCourse;
-  onChange: (course: EditorCourse) => void;
+  courseId: string;
   onBack: () => void;
   onOpenLessonModal: (moduleId: string) => void;
+  onEditLesson: (lesson: LessonEditData) => void;
 }
 
 type EditorTab = 'program' | 'settings';
+
+interface FormState {
+  title: string;
+  subtitle: string;
+  category_id: number;
+  level: string;
+  description: string;
+  price: number;
+  old_price: number | null;
+  is_free: boolean;
+}
 
 const TYPE_ICONS: Record<EditorLesson['type'], { label: string; cls: string }> = {
   video: { label: '▶', cls: 'typeVideo' },
@@ -51,29 +74,62 @@ const TYPE_LABELS: Record<EditorLesson['type'], string> = {
   text:  'Текст',
 };
 
-const CATEGORIES = [
-  'Разработка',
-  'Дизайн',
-  'Маркетинг',
-  'Аналитика',
-  'Бизнес',
-  'Личное развитие',
-];
-
 const LEVELS = [
   'Начинающий',
   'Средний',
   'Продвинутый',
 ];
 
-export default function CourseEditor({ course, onChange, onBack, onOpenLessonModal }: Props) {
-  const [tab, setTab] = useState<EditorTab>('program');
-  const [openModules, setOpenModules] = useState<Set<string>>(
-    () => new Set(course.modules.map(m => m.id))
-  );
+export default function CourseEditor({ courseId, onBack, onOpenLessonModal, onEditLesson }: Props) {
+  const { data: course, isLoading } = useStudioCourse(courseId);
 
-  const totalModules = course.modules.length;
-  const totalLessons = course.modules.reduce((sum, m) => sum + m.lessons.length, 0);
+  const { data: categoriesData } = useCategories();
+  const categories = categoriesData?.data ?? [];
+
+  const publishMut = usePublishCourse();
+  const unpublishMut = useUnpublishCourse();
+  const createModuleMut = useCreateModule();
+  const updateModuleMut = useUpdateModule();
+  const deleteModuleMut = useDeleteModule();
+  const deleteLessonMut = useDeleteLesson();
+
+  const [tab, setTab] = useState<EditorTab>('program');
+  const [openModules, setOpenModules] = useState<Set<string>>(new Set());
+  const [form, setForm] = useState<FormState | null>(null);
+  const [editingModuleId, setEditingModuleId] = useState<string | null>(null);
+  const [editingModuleTitle, setEditingModuleTitle] = useState('');
+
+  useEffect(() => {
+    if (course && !form) {
+      setForm({
+        title: course.title,
+        subtitle: course.subtitle ?? '',
+        category_id: course.category_id ?? 0,
+        level: course.level ?? '',
+        description: course.description ?? '',
+        price: course.price,
+        old_price: course.old_price,
+        is_free: course.is_free ?? false,
+      });
+      setOpenModules(new Set((course.modules ?? []).map((m, i) => m.id ?? `mod_${i}`)));
+    }
+  }, [course, form]);
+
+  if (!course) {
+    return (
+      <div className={s.wrap}>
+        <p style={{ color: '#8e8d99' }}>Загрузка курса...</p>
+      </div>
+    );
+  }
+
+  const modules = course.modules ?? [];
+  const totalModules = modules.length;
+  const totalLessons = modules.reduce((sum, m) => sum + (m.lessons?.length ?? 0), 0);
+
+  const updateForm = <K extends keyof FormState>(key: K, value: FormState[K]) => {
+    setForm(prev => prev ? { ...prev, [key]: value } : prev);
+  };
 
   const toggleModule = (id: string) => {
     setOpenModules(prev => {
@@ -84,20 +140,42 @@ export default function CourseEditor({ course, onChange, onBack, onOpenLessonMod
     });
   };
 
-  const updateField = <K extends keyof EditorCourse>(key: K, value: EditorCourse[K]) => {
-    onChange({ ...course, [key]: value });
+  const handlePublish = async () => {
+    await publishMut.mutateAsync(courseId);
   };
 
-  const addModule = () => {
-    const id = 'mod_' + Date.now();
-    const newModule: EditorModule = {
-      id,
-      title: 'Новый модуль',
-      lessons: [],
-    };
-    onChange({ ...course, modules: [...course.modules, newModule] });
-    setOpenModules(prev => new Set(prev).add(id));
+  const handleUnpublish = async () => {
+    await unpublishMut.mutateAsync(courseId);
   };
+
+  const handleAddModule = async () => {
+    const created = await createModuleMut.mutateAsync({ courseId, title: 'Новый модуль' });
+    setOpenModules(prev => new Set(prev).add(created.id));
+  };
+
+  const handleDeleteModule = async (moduleId: string) => {
+    await deleteModuleMut.mutateAsync({ courseId, moduleId });
+  };
+
+  const handleDeleteLesson = async (lessonId: string) => {
+    await deleteLessonMut.mutateAsync({ courseId, lessonId });
+  };
+
+  const startEditModule = (moduleId: string, title: string) => {
+    setEditingModuleId(moduleId);
+    setEditingModuleTitle(title);
+  };
+
+  const saveModuleTitle = async () => {
+    if (!editingModuleId || !editingModuleTitle.trim()) {
+      setEditingModuleId(null);
+      return;
+    }
+    await updateModuleMut.mutateAsync({ courseId, moduleId: editingModuleId, title: editingModuleTitle.trim() });
+    setEditingModuleId(null);
+  };
+
+  const displayTitle = form?.title || course.title || 'Без названия';
 
   return (
     <div className={s.wrap}>
@@ -105,14 +183,14 @@ export default function CourseEditor({ course, onChange, onBack, onOpenLessonMod
       <div className={s.breadcrumb}>
         <span className={s.breadcrumbLink} onClick={onBack}>Курсы</span>
         <span className={s.breadcrumbSep}>/</span>
-        <span className={s.breadcrumbCurrent}>{course.title}</span>
+        <span className={s.breadcrumbCurrent}>{displayTitle}</span>
       </div>
 
       {/* Head */}
       <div className={s.head}>
         <div>
           <div className={s.titleRow}>
-            <h1 className={s.title}>{course.title}</h1>
+            <h1 className={s.title}>{displayTitle}</h1>
             <span className={course.status === 'published' ? s.statusPublished : s.statusDraft}>
               {course.status === 'published' ? 'Опубликован' : 'Черновик'}
             </span>
@@ -121,9 +199,6 @@ export default function CourseEditor({ course, onChange, onBack, onOpenLessonMod
             {totalModules} {pluralize(totalModules, 'модуль', 'модуля', 'модулей')} &middot;{' '}
             {totalLessons} {pluralize(totalLessons, 'урок', 'урока', 'уроков')}
           </div>
-        </div>
-        <div className={s.actions}>
-          <button className={s.saveBtn}>Сохранить</button>
         </div>
       </div>
 
@@ -141,43 +216,67 @@ export default function CourseEditor({ course, onChange, onBack, onOpenLessonMod
       {tab === 'program' && (
         <>
           <div className={s.toolbar}>
-            <button className={s.toolbarBtnPrimary} onClick={addModule}>+ Модуль</button>
-            <button className={s.toolbarBtn} onClick={() => {
-              if (course.modules.length > 0) {
-                onOpenLessonModal(course.modules[0].id);
-              }
-            }}>+ Урок</button>
+            <button className={s.toolbarBtnPrimary} onClick={handleAddModule}>+ Модуль</button>
           </div>
 
-          {course.modules.map(mod => {
-            const isOpen = openModules.has(mod.id);
+          {modules.map((mod, mi) => {
+            const modKey = mod.id ?? `mod_${mi}`;
+            const isOpen = openModules.has(modKey);
+            const isEditingThis = editingModuleId === modKey;
+            const lessons = mod.lessons ?? [];
             return (
-              <div className={s.moduleCard} key={mod.id}>
-                <div className={s.moduleHeader} onClick={() => toggleModule(mod.id)}>
+              <div className={s.moduleCard} key={modKey}>
+                <div className={s.moduleHeader} onClick={() => toggleModule(modKey)}>
                   <span className={s.dragHandle}>&#x2817;</span>
                   <span className={isOpen ? s.chevronOpen : s.chevron}>
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                       <path d="M9 18l6-6-6-6" />
                     </svg>
                   </span>
-                  <span className={s.moduleTitle}>{mod.title}</span>
+                  {isEditingThis ? (
+                    <input
+                      className={s.moduleTitleInput}
+                      value={editingModuleTitle}
+                      onChange={e => setEditingModuleTitle(e.target.value)}
+                      onBlur={saveModuleTitle}
+                      onKeyDown={e => { if (e.key === 'Enter') saveModuleTitle(); if (e.key === 'Escape') setEditingModuleId(null); }}
+                      onClick={e => e.stopPropagation()}
+                      autoFocus
+                    />
+                  ) : (
+                    <span className={s.moduleTitle}>{mod.title}</span>
+                  )}
                   <span className={s.moduleLessons}>
-                    {mod.lessons.length} {pluralize(mod.lessons.length, 'урок', 'урока', 'уроков')}
+                    {lessons.length} {pluralize(lessons.length, 'урок', 'урока', 'уроков')}
                   </span>
-                  <span
-                    className={s.addLessonLink}
-                    onClick={e => { e.stopPropagation(); onOpenLessonModal(mod.id); }}
-                  >
-                    + урок
-                  </span>
+                  {mod.id && !isEditingThis && (
+                    <button
+                      className={s.editBtn}
+                      onClick={e => { e.stopPropagation(); startEditModule(mod.id!, mod.title); }}
+                      title="Редактировать модуль"
+                    >
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 3a2.85 2.85 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg>
+                    </button>
+                  )}
+                  {mod.id && (
+                    <button
+                      className={s.moreBtn}
+                      onClick={e => { e.stopPropagation(); handleDeleteModule(mod.id!); }}
+                      title="Удалить модуль"
+                    >
+                      &times;
+                    </button>
+                  )}
                 </div>
 
-                {isOpen && mod.lessons.length > 0 && (
+                {isOpen && lessons.length > 0 && (
                   <div className={s.lessonList}>
-                    {mod.lessons.map(lesson => {
-                      const icon = TYPE_ICONS[lesson.type];
+                    {lessons.map(lesson => {
+                      const lessonType = lesson.type ?? 'video';
+                      const icon = TYPE_ICONS[lessonType];
+                      const lessonId = String(lesson.id);
                       return (
-                        <div className={s.lessonRow} key={lesson.id}>
+                        <div className={s.lessonRow} key={lessonId}>
                           <span className={s.lessonDrag}>&#x2817;</span>
                           <span className={s[icon.cls as keyof typeof s] as string}>
                             {icon.label}
@@ -185,23 +284,41 @@ export default function CourseEditor({ course, onChange, onBack, onOpenLessonMod
                           <span className={s.lessonName}>{lesson.name}</span>
                           {lesson.is_free && <span className={s.freeBadge}>Free</span>}
                           <span className={s.lessonMeta}>
-                            {TYPE_LABELS[lesson.type]} &middot; {lesson.duration}
+                            {TYPE_LABELS[lessonType]} &middot; {lesson.duration}
                           </span>
                           <span className={lesson.status === 'ready' ? s.lessonStatusReady : s.lessonStatusDraft}>
                             {lesson.status === 'ready' ? 'Готов' : 'Черновик'}
                           </span>
-                          <button className={s.moreBtn}>&ctdot;</button>
+                          <button
+                            className={s.editBtn}
+                            onClick={() => onEditLesson({
+                              id: lessonId,
+                              name: lesson.name,
+                              type: lessonType,
+                              is_free: lesson.is_free,
+                            })}
+                            title="Редактировать урок"
+                          >
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 3a2.85 2.85 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg>
+                          </button>
+                          <button
+                            className={s.moreBtn}
+                            onClick={() => handleDeleteLesson(lessonId)}
+                            title="Удалить урок"
+                          >
+                            &times;
+                          </button>
                         </div>
                       );
                     })}
                   </div>
                 )}
 
-                {isOpen && (
+                {isOpen && mod.id && (
                   <div className={s.addLessonFooter}>
                     <span
                       className={s.addLessonFooterLink}
-                      onClick={() => onOpenLessonModal(mod.id)}
+                      onClick={() => onOpenLessonModal(mod.id!)}
                     >
                       &#xFF0B; Добавить урок
                     </span>
@@ -214,7 +331,7 @@ export default function CourseEditor({ course, onChange, onBack, onOpenLessonMod
       )}
 
       {/* Settings tab */}
-      {tab === 'settings' && (
+      {tab === 'settings' && form && (
         <div className={s.settingsGrid}>
           <div>
             {/* Main info card */}
@@ -225,8 +342,8 @@ export default function CourseEditor({ course, onChange, onBack, onOpenLessonMod
                 <label className={s.label}>Название курса</label>
                 <input
                   className={s.input}
-                  value={course.title}
-                  onChange={e => updateField('title', e.target.value)}
+                  value={form.title}
+                  onChange={e => updateForm('title', e.target.value)}
                   placeholder="Введите название"
                 />
               </div>
@@ -235,9 +352,19 @@ export default function CourseEditor({ course, onChange, onBack, onOpenLessonMod
                 <label className={s.label}>Подзаголовок</label>
                 <input
                   className={s.input}
-                  value={course.subtitle}
-                  onChange={e => updateField('subtitle', e.target.value)}
+                  value={form.subtitle}
+                  onChange={e => updateForm('subtitle', e.target.value)}
                   placeholder="Краткое описание курса"
+                />
+              </div>
+
+              <div className={s.fieldGroup}>
+                <label className={s.label}>Описание</label>
+                <textarea
+                  className={s.textarea}
+                  value={form.description}
+                  onChange={e => updateForm('description', e.target.value)}
+                  placeholder="Подробное описание курса..."
                 />
               </div>
 
@@ -245,11 +372,11 @@ export default function CourseEditor({ course, onChange, onBack, onOpenLessonMod
                 <label className={s.label}>Категория</label>
                 <select
                   className={s.select}
-                  value={course.category}
-                  onChange={e => updateField('category', e.target.value)}
+                  value={form.category_id || ''}
+                  onChange={e => updateForm('category_id', Number(e.target.value))}
                 >
                   <option value="">Выберите категорию</option>
-                  {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
+                  {categories.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
                 </select>
               </div>
 
@@ -257,8 +384,8 @@ export default function CourseEditor({ course, onChange, onBack, onOpenLessonMod
                 <label className={s.label}>Уровень</label>
                 <select
                   className={s.select}
-                  value={course.level}
-                  onChange={e => updateField('level', e.target.value)}
+                  value={form.level}
+                  onChange={e => updateForm('level', e.target.value)}
                 >
                   <option value="">Выберите уровень</option>
                   {LEVELS.map(l => <option key={l} value={l}>{l}</option>)}
@@ -276,10 +403,10 @@ export default function CourseEditor({ course, onChange, onBack, onOpenLessonMod
                   <input
                     className={s.input}
                     type="number"
-                    value={course.is_free ? '' : course.price}
-                    onChange={e => updateField('price', Number(e.target.value))}
+                    value={form.is_free ? '' : form.price}
+                    onChange={e => updateForm('price', Number(e.target.value))}
                     placeholder="0"
-                    disabled={course.is_free}
+                    disabled={form.is_free}
                   />
                 </div>
                 <div className={s.fieldGroup}>
@@ -287,17 +414,17 @@ export default function CourseEditor({ course, onChange, onBack, onOpenLessonMod
                   <input
                     className={s.input}
                     type="number"
-                    value={course.is_free ? '' : (course.old_price ?? '')}
-                    onChange={e => updateField('old_price', e.target.value ? Number(e.target.value) : null)}
+                    value={form.is_free ? '' : (form.old_price ?? '')}
+                    onChange={e => updateForm('old_price', e.target.value ? Number(e.target.value) : null)}
                     placeholder="0"
-                    disabled={course.is_free}
+                    disabled={form.is_free}
                   />
                 </div>
               </div>
 
-              <div className={s.checkboxRow} onClick={() => updateField('is_free', !course.is_free)}>
-                <span className={course.is_free ? s.checkboxChecked : s.checkboxUnchecked}>
-                  {course.is_free ? '✓' : ''}
+              <div className={s.checkboxRow} onClick={() => updateForm('is_free', !form.is_free)}>
+                <span className={form.is_free ? s.checkboxChecked : s.checkboxUnchecked}>
+                  {form.is_free ? '✓' : ''}
                 </span>
                 <span className={s.checkboxLabel}>Бесплатный курс</span>
               </div>
@@ -321,12 +448,8 @@ export default function CourseEditor({ course, onChange, onBack, onOpenLessonMod
                 {course.status === 'published' ? 'Курс опубликован' : 'Курс в черновике'}
               </div>
               <div className={s.publishActions}>
-                <button className={s.publishSaveBtn}>Сохранить изменения</button>
                 {course.status === 'published' && (
-                  <button
-                    className={s.unpublishBtn}
-                    onClick={() => updateField('status', 'draft')}
-                  >
+                  <button className={s.unpublishBtn} onClick={handleUnpublish}>
                     Снять с публикации
                   </button>
                 )}
@@ -334,7 +457,7 @@ export default function CourseEditor({ course, onChange, onBack, onOpenLessonMod
                   <button
                     className={s.saveBtn}
                     style={{ width: '100%', justifyContent: 'center' }}
-                    onClick={() => updateField('status', 'published')}
+                    onClick={handlePublish}
                   >
                     Опубликовать
                   </button>

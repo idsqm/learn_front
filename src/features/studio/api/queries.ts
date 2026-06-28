@@ -3,12 +3,28 @@ import { studioApi } from './studioApi';
 import { useAuthStore } from '../../auth/store/authStore';
 import type { CreateCoursePayload } from './studioApi';
 
+export function useCategories() {
+  return useQuery({
+    queryKey: ['categories'],
+    queryFn: () => studioApi.listCategories(),
+  });
+}
+
 export function useStudioCourses() {
   const isAuthenticated = useAuthStore(s => s.isAuthenticated);
   return useQuery({
     queryKey: ['studio', 'courses'],
     queryFn: () => studioApi.listCourses(),
     enabled: isAuthenticated,
+  });
+}
+
+export function useStudioCourse(id: string) {
+  const isAuthenticated = useAuthStore(s => s.isAuthenticated);
+  return useQuery({
+    queryKey: ['studio', 'course', id],
+    queryFn: () => studioApi.getCourse(id),
+    enabled: isAuthenticated && !!id,
   });
 }
 
@@ -62,7 +78,7 @@ export function useCreateCourse() {
   return useMutation({
     mutationFn: (payload: CreateCoursePayload) => studioApi.createCourse(payload),
     onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ['studio', 'courses'] });
+      qc.invalidateQueries({ queryKey: ['studio'] });
     },
   });
 }
@@ -73,7 +89,7 @@ export function useUpdateCourse() {
     mutationFn: ({ id, payload }: { id: string; payload: Partial<CreateCoursePayload> }) =>
       studioApi.updateCourse(id, payload),
     onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ['studio', 'courses'] });
+      qc.invalidateQueries({ queryKey: ['studio'] });
     },
   });
 }
@@ -83,7 +99,7 @@ export function usePublishCourse() {
   return useMutation({
     mutationFn: (id: string) => studioApi.publishCourse(id),
     onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ['studio', 'courses'] });
+      qc.invalidateQueries({ queryKey: ['studio'] });
     },
   });
 }
@@ -93,7 +109,7 @@ export function useUnpublishCourse() {
   return useMutation({
     mutationFn: (id: string) => studioApi.unpublishCourse(id),
     onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ['studio', 'courses'] });
+      qc.invalidateQueries({ queryKey: ['studio'] });
     },
   });
 }
@@ -104,7 +120,7 @@ export function useCreateModule() {
     mutationFn: ({ courseId, title }: { courseId: string; title: string }) =>
       studioApi.createModule(courseId, { title }),
     onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ['studio', 'courses'] });
+      qc.invalidateQueries({ queryKey: ['studio'] });
     },
   });
 }
@@ -115,7 +131,51 @@ export function useCreateLesson() {
     mutationFn: ({ courseId, moduleId, payload }: { courseId: string; moduleId: string; payload: { name: string; type: 'video' | 'quiz' | 'text'; is_free?: boolean } }) =>
       studioApi.createLesson(courseId, moduleId, payload),
     onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ['studio', 'courses'] });
+      qc.invalidateQueries({ queryKey: ['studio'] });
+    },
+  });
+}
+
+export function useUpdateModule() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: ({ courseId, moduleId, title }: { courseId: string; moduleId: string; title: string }) =>
+      studioApi.updateModule(courseId, moduleId, { title }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['studio'] });
+    },
+  });
+}
+
+export function useDeleteModule() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: ({ courseId, moduleId }: { courseId: string; moduleId: string }) =>
+      studioApi.deleteModule(courseId, moduleId),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['studio'] });
+    },
+  });
+}
+
+export function useUpdateLesson() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: ({ courseId, lessonId, payload }: { courseId: string; lessonId: string; payload: { name?: string; type?: 'video' | 'quiz' | 'text'; is_free?: boolean } }) =>
+      studioApi.updateLesson(courseId, lessonId, payload),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['studio'] });
+    },
+  });
+}
+
+export function useDeleteLesson() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: ({ courseId, lessonId }: { courseId: string; lessonId: string }) =>
+      studioApi.deleteLesson(courseId, lessonId),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['studio'] });
     },
   });
 }

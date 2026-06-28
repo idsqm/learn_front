@@ -1,29 +1,32 @@
 export interface StudioLesson {
-  id: string;
+  id: number | string;
   name: string;
-  type: 'video' | 'quiz' | 'text';
+  type?: 'video' | 'quiz' | 'text';
   duration: string;
   is_free: boolean;
-  status: 'ready' | 'draft';
+  status?: 'ready' | 'draft';
 }
 
 export interface StudioModule {
-  id: string;
+  id?: string;
   title: string;
+  duration?: string;
+  lessons_count?: number;
   lessons: StudioLesson[];
 }
 
 export interface StudioCourse {
-  id: string;
+  id: number | string;
   title: string;
-  subtitle: string;
+  subtitle?: string;
   category: string;
+  category_id?: number;
   level: string;
-  description: string;
+  description?: string;
   price: number;
   old_price: number | null;
-  is_free: boolean;
-  status: 'published' | 'draft';
+  is_free?: boolean;
+  status?: 'published' | 'draft';
   modules: StudioModule[];
   students_count: number;
   rating: number;
