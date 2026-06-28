@@ -1,0 +1,93 @@
+.wrap {
+  min-height: calc(100vh - 80px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+}
+
+.card {
+  max-width: 420px;
+  width: 100%;
+  background: #fff;
+  border: 1px solid #e7e7ef;
+  border-radius: 20px;
+  padding: 48px 36px;
+  text-align: center;
+  box-shadow: 0 8px 30px rgba(20, 19, 26, 0.08);
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid #e7e7ef;
+  border-top-color: #5d4ee6;
+  border-radius: 50%;
+  margin: 0 auto 24px;
+  animation: spin .8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.iconSuccess {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: #eefaf2;
+  border: 2px solid #b7e3cb;
+  color: #178a5a;
+  font: 700 24px 'Geist', sans-serif;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 20px;
+}
+
+.iconError {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: #fef2f2;
+  border: 2px solid #f0c4c4;
+  color: #c2562f;
+  font: 700 24px 'Geist', sans-serif;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 20px;
+}
+
+.title {
+  font: 700 22px 'Geist', sans-serif;
+  letter-spacing: -.02em;
+  margin: 0 0 8px;
+  color: #18171f;
+}
+
+.text {
+  font: 400 14px/1.6 'Geist', sans-serif;
+  color: #5c5b67;
+  margin: 0 0 24px;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 44px;
+  padding: 0 28px;
+  border: none;
+  border-radius: 11px;
+  background: #5d4ee6;
+  color: #fff;
+  font: 600 14px 'Geist', sans-serif;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(93, 78, 230, .3);
+  transition: background .2s, transform .15s;
+}
+.btn:hover {
+  background: #4d3ed6;
+  transform: translateY(-1px);
+}
