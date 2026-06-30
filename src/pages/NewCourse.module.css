@@ -321,6 +321,12 @@
   color: #149c95;
 }
 
+.typeAssignment {
+  composes: typeIcon;
+  background: #d97a061a;
+  color: #d97a06;
+}
+
 .lessonName {
   flex: 1;
   font: 500 14px 'Geist', sans-serif;

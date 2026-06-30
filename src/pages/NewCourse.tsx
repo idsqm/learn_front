@@ -20,6 +20,7 @@ const TYPE_ICONS: Record<EditorLesson['type'], { label: string; cls: string }> =
   video: { label: '▶', cls: 'typeVideo' },
   quiz:  { label: '?', cls: 'typeQuiz' },
   text:  { label: '≡', cls: 'typeText' },
+  assignment: { label: '✎', cls: 'typeAssignment' },
 };
 
 export default function NewCourse({ onBack, onCreate, onOpenLessonModal, pendingLessons }: Props) {

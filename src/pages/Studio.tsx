@@ -1,14 +1,39 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuthStore } from '../features/auth/store/authStore';
-import { useStudioCourses, useStudioStats, useCreateCourse, useCreateModule, useCreateLesson, useUpdateLesson } from '../features/studio/api/queries';
+import {
+  useStudioCourses,
+  useStudioStats,
+  useCreateCourse,
+  useCreateModule,
+  useCreateLesson,
+  useUpdateLesson,
+  useLessonDetail,
+  useSaveLessonContent,
+  useCreateQuestion,
+  useUpdateQuestion,
+  useDeleteQuestion,
+} from '../features/studio/api/queries';
+import type { LessonDetail, SaveQuizQuestionPayload } from '../features/studio/api/studioApi';
 import LogoIcon from '../shared/components/LogoIcon';
 import LessonModal from '../shared/components/LessonModal';
-import type { LessonPayload, LessonEditData } from '../shared/components/LessonModal';
+import type { LessonPayload, LessonEditData, QuizQuestion } from '../shared/components/LessonModal';
 import CourseEditor from './CourseEditor';
 import type { EditorCourse, EditorLesson } from './CourseEditor';
 import NewCourse from './NewCourse';
 import s from './Studio.module.css';
+
+function mapDetailToQuestions(detail: LessonDetail): QuizQuestion[] {
+  return (detail.questions ?? []).map(q => ({
+    id: 'q_' + q.id,
+    dbId: q.id,
+    text: q.text,
+    questionType: q.question_type === 'multiple' ? 'multiple' : 'single',
+    points: q.points || 1,
+    options: q.options.map(o => ({ id: 'o_' + o.id, dbId: o.id, text: o.text })),
+    correctOptionIds: q.options.filter(o => o.is_correct).map(o => 'o_' + o.id),
+  }));
+}
 
 type Tab = 'courses' | 'students' | 'income' | 'reviews';
 
@@ -26,7 +51,7 @@ export default function Studio() {
 
   const [lessonModalModuleId, setLessonModalModuleId] = useState<string | null>(null);
   const [lessonModalCourseId, setLessonModalCourseId] = useState<string | null>(null);
-  const [editingLesson, setEditingLesson] = useState<LessonEditData | null>(null);
+  const [editingLessonStub, setEditingLessonStub] = useState<LessonEditData | null>(null);
   const [pendingLessons, setPendingLessons] = useState<Map<string, EditorLesson[]>>(new Map());
 
   const { data: coursesData, isLoading: coursesLoading } = useStudioCourses();
@@ -35,6 +60,33 @@ export default function Studio() {
   const createModuleMut = useCreateModule();
   const createLessonMut = useCreateLesson();
   const updateLessonMut = useUpdateLesson();
+  const saveLessonContentMut = useSaveLessonContent();
+  const createQuestionMut = useCreateQuestion();
+  const updateQuestionMut = useUpdateQuestion();
+  const deleteQuestionMut = useDeleteQuestion();
+
+  const { data: lessonDetailData } = useLessonDetail(
+    lessonModalCourseId ?? '',
+    editingLessonStub?.id ?? '',
+    !!editingLessonStub,
+  );
+
+  const editingLesson: LessonEditData | null = editingLessonStub && (
+    lessonDetailData
+      ? {
+          ...editingLessonStub,
+          // The curriculum listing (course.modules) never returns a lesson's `type`,
+          // so the stub always defaults to 'video' — the detail fetch is the source of truth.
+          type: lessonDetailData.type,
+          name: lessonDetailData.name,
+          is_free: lessonDetailData.is_free,
+          textContent: lessonDetailData.content?.body ?? '',
+          videoUrl: lessonDetailData.content?.video_url ?? '',
+          questions: lessonDetailData.type === 'quiz' ? mapDetailToQuestions(lessonDetailData) : undefined,
+          loading: false,
+        }
+      : { ...editingLessonStub, loading: true }
+  );
 
   const courses = coursesData?.data ?? [];
 
@@ -59,6 +111,48 @@ export default function Studio() {
     navigate(`/studio/courses/${courseId}`);
   };
 
+  /* Persist lesson content (video URL / text body) and quiz questions via the
+     dedicated content/question endpoints, diffing against previously loaded questions. */
+  const persistLessonExtras = async (
+    courseId: string,
+    lessonId: string,
+    lesson: Pick<LessonPayload, 'type' | 'textContent' | 'videoUrl' | 'questions'>,
+    existingQuestions?: QuizQuestion[],
+  ) => {
+    if (lesson.type === 'video') {
+      if (lesson.videoUrl !== undefined) {
+        await saveLessonContentMut.mutateAsync({ courseId, lessonId, payload: { video_url: lesson.videoUrl } });
+      }
+    } else if (lesson.type === 'text' || lesson.type === 'assignment') {
+      if (lesson.textContent !== undefined) {
+        await saveLessonContentMut.mutateAsync({ courseId, lessonId, payload: { body: lesson.textContent } });
+      }
+    } else if (lesson.type === 'quiz') {
+      const current = lesson.questions ?? [];
+      const currentDbIds = new Set(current.filter(q => q.dbId).map(q => q.dbId));
+
+      for (const old of existingQuestions ?? []) {
+        if (old.dbId && !currentDbIds.has(old.dbId)) {
+          await deleteQuestionMut.mutateAsync({ courseId, questionId: String(old.dbId) });
+        }
+      }
+
+      for (const q of current) {
+        const payload: SaveQuizQuestionPayload = {
+          text: q.text,
+          question_type: q.questionType,
+          points: q.points,
+          options: q.options.map(o => ({ text: o.text, is_correct: q.correctOptionIds.includes(o.id) })),
+        };
+        if (q.dbId) {
+          await updateQuestionMut.mutateAsync({ courseId, questionId: String(q.dbId), payload });
+        } else {
+          await createQuestionMut.mutateAsync({ courseId, lessonId, payload });
+        }
+      }
+    }
+  };
+
   const handleCreate = async (course: EditorCourse) => {
     try {
       const created = await createCourseMut.mutateAsync({
@@ -76,11 +170,14 @@ export default function Studio() {
       for (const mod of course.modules) {
         const createdMod = await createModuleMut.mutateAsync({ courseId: createdCourseId, title: mod.title });
         for (const lesson of mod.lessons) {
-          await createLessonMut.mutateAsync({
+          const createdLesson = await createLessonMut.mutateAsync({
             courseId: createdCourseId,
             moduleId: createdMod.id,
             payload: { name: lesson.name, type: lesson.type, is_free: lesson.is_free },
           });
+          try {
+            await persistLessonExtras(createdCourseId, String(createdLesson.id), lesson);
+          } catch { /* */ }
         }
       }
     } catch {
@@ -91,13 +188,13 @@ export default function Studio() {
   };
 
   const handleOpenLessonModal = (moduleId: string) => {
-    setEditingLesson(null);
+    setEditingLessonStub(null);
     setLessonModalModuleId(moduleId);
     setLessonModalCourseId(editingCourseId);
   };
 
   const handleEditLessonModal = (lesson: LessonEditData) => {
-    setEditingLesson(lesson);
+    setEditingLessonStub(lesson);
     setLessonModalModuleId('__edit__');
     setLessonModalCourseId(editingCourseId);
   };
@@ -110,6 +207,7 @@ export default function Studio() {
           lessonId: editingLesson.id,
           payload: { name: lesson.name, type: lesson.type, is_free: lesson.is_free },
         });
+        await persistLessonExtras(lessonModalCourseId, editingLesson.id, lesson, editingLesson.questions);
       } catch { /* */ }
     } else if (lessonModalModuleId) {
       const newLesson: EditorLesson = {
@@ -119,6 +217,9 @@ export default function Studio() {
         duration: '—',
         is_free: lesson.is_free ?? false,
         status: 'draft',
+        textContent: lesson.textContent,
+        videoUrl: lesson.videoUrl,
+        questions: lesson.questions,
       };
 
       if (isNewCourse) {
@@ -130,24 +231,25 @@ export default function Studio() {
         });
       } else if (editingCourseId && lessonModalCourseId) {
         try {
-          await createLessonMut.mutateAsync({
+          const created = await createLessonMut.mutateAsync({
             courseId: lessonModalCourseId,
             moduleId: lessonModalModuleId,
             payload: { name: lesson.name, type: lesson.type, is_free: lesson.is_free },
           });
+          await persistLessonExtras(lessonModalCourseId, String(created.id), lesson);
         } catch { /* */ }
       }
     }
 
     setLessonModalModuleId(null);
     setLessonModalCourseId(null);
-    setEditingLesson(null);
+    setEditingLessonStub(null);
   };
 
   const closeLessonModal = () => {
     setLessonModalModuleId(null);
     setLessonModalCourseId(null);
-    setEditingLesson(null);
+    setEditingLessonStub(null);
   };
 
   const handleBackToList = () => {

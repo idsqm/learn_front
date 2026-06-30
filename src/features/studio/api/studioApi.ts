@@ -18,16 +18,71 @@ export interface CreateCoursePayload {
   price: number;
   old_price?: number | null;
   is_free: boolean;
+  learn_items?: string[];
+  includes?: string[];
 }
 
 export interface CreateModulePayload {
   title: string;
+  sort_order?: number;
 }
+
+export type LessonType = 'video' | 'quiz' | 'text' | 'assignment';
 
 export interface CreateLessonPayload {
   name: string;
-  type: 'video' | 'quiz' | 'text';
+  type: LessonType;
   is_free?: boolean;
+  sort_order?: number;
+}
+
+export interface LessonContentPayload {
+  video_url?: string;
+  body?: string;
+}
+
+export type QuestionType = 'single' | 'multiple' | 'input';
+
+export interface SaveQuizQuestionPayload {
+  text: string;
+  question_type: QuestionType;
+  points?: number;
+  options?: { text: string; is_correct?: boolean }[];
+}
+
+export interface QuizOptionDetail {
+  id: number;
+  text: string;
+  is_correct: boolean;
+  sort_order: number;
+}
+
+export interface QuizQuestionDetail {
+  id: number;
+  lesson_id: number;
+  text: string;
+  question_type: QuestionType;
+  points: number;
+  sort_order: number;
+  options: QuizOptionDetail[];
+}
+
+export interface LessonContentDetail {
+  id: number;
+  lesson_id: number;
+  video_url: string | null;
+  body: string | null;
+}
+
+export interface LessonDetail {
+  id: number;
+  name: string;
+  type: LessonType;
+  duration_minutes?: number;
+  is_free: boolean;
+  sort_order?: number;
+  content: LessonContentDetail | null;
+  questions: QuizQuestionDetail[];
 }
 
 type RawCourse = Omit<StudioCourse, 'modules'> & {
@@ -110,6 +165,31 @@ export const studioApi = {
 
   async deleteLesson(courseId: string, lessonId: string) {
     const { data } = await api.delete<{ message: string }>(`/studio/courses/${courseId}/lessons/${lessonId}`);
+    return data;
+  },
+
+  async getLessonDetail(courseId: string, lessonId: string) {
+    const { data } = await api.get<LessonDetail>(`/studio/courses/${courseId}/lessons/${lessonId}/detail`);
+    return data;
+  },
+
+  async saveLessonContent(courseId: string, lessonId: string, payload: LessonContentPayload) {
+    const { data } = await api.put<{ message: string }>(`/studio/courses/${courseId}/lessons/${lessonId}/content`, payload);
+    return data;
+  },
+
+  async createQuestion(courseId: string, lessonId: string, payload: SaveQuizQuestionPayload) {
+    const { data } = await api.post<{ id: number }>(`/studio/courses/${courseId}/lessons/${lessonId}/questions`, payload);
+    return data;
+  },
+
+  async updateQuestion(courseId: string, questionId: string, payload: SaveQuizQuestionPayload) {
+    const { data } = await api.put<{ message: string }>(`/studio/courses/${courseId}/questions/${questionId}`, payload);
+    return data;
+  },
+
+  async deleteQuestion(courseId: string, questionId: string) {
+    const { data } = await api.delete<{ message: string }>(`/studio/courses/${courseId}/questions/${questionId}`);
     return data;
   },
 

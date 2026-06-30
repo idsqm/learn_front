@@ -133,6 +133,12 @@
   color: #149c95;
 }
 
+.typeCardIconAssignment {
+  composes: typeCardIcon;
+  background: #d97a061a;
+  color: #d97a06;
+}
+
 .typeCardLabel {
   font: 600 13px 'Geist', sans-serif;
   color: #3a3942;
@@ -404,6 +410,89 @@
   border-color: #5d4ee6;
   background: #5d4ee6;
   box-shadow: inset 0 0 0 2.5px #fff;
+}
+
+.optionCheckbox {
+  flex: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 4px;
+  border: 2px solid #d7d7e2;
+  cursor: pointer;
+  transition: border-color .15s;
+}
+
+.optionCheckboxCorrect {
+  composes: optionCheckbox;
+  border-color: #5d4ee6;
+  background: #5d4ee6;
+  box-shadow: inset 0 0 0 2.5px #fff;
+}
+
+.questionMeta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin: -2px 0 12px 36px;
+}
+
+.qTypeToggle {
+  display: inline-flex;
+  gap: 2px;
+  background: #f4f4f8;
+  border-radius: 8px;
+  padding: 3px;
+  flex: none;
+}
+
+.qTypeBtn {
+  height: 24px;
+  padding: 0 9px;
+  border-radius: 6px;
+  border: none;
+  background: none;
+  font: 600 11.5px 'Geist', sans-serif;
+  color: #8e8d99;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.qTypeBtnActive {
+  composes: qTypeBtn;
+  background: #fff;
+  color: #5d4ee6;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, .08);
+}
+
+.qPointsField {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  flex: none;
+}
+
+.qPointsLabel {
+  font: 500 11.5px 'Geist', sans-serif;
+  color: #8e8d99;
+  white-space: nowrap;
+}
+
+.qPointsInput {
+  width: 48px;
+  height: 28px;
+  padding: 0 6px;
+  border: 1px solid #d7d7e2;
+  border-radius: 7px;
+  background: #fff;
+  font: 600 12px 'Geist', sans-serif;
+  color: #18171f;
+  outline: none;
+  text-align: center;
+}
+.qPointsInput:focus {
+  border-color: #5d4ee6;
 }
 
 .optionInput {

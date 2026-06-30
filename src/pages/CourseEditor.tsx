@@ -1,25 +1,32 @@
 import { useState, useEffect } from 'react';
+import type { DragEvent } from 'react';
 import {
   useStudioCourse,
   useCategories,
   usePublishCourse,
   useUnpublishCourse,
+  useUpdateCourse,
   useCreateModule,
   useUpdateModule,
   useDeleteModule,
+  useUpdateLesson,
   useDeleteLesson,
 } from '../features/studio/api/queries';
-import type { LessonEditData } from '../shared/components/LessonModal';
+import type { LessonEditData, QuizQuestion } from '../shared/components/LessonModal';
+import type { StudioModule, StudioLesson } from '../features/studio/types';
 import s from './CourseEditor.module.css';
 
 /* ── Types (exported for NewCourse / Studio) ── */
 export interface EditorLesson {
   id: string;
   name: string;
-  type: 'video' | 'quiz' | 'text';
+  type: 'video' | 'quiz' | 'text' | 'assignment';
   duration: string;
   is_free: boolean;
   status: 'ready' | 'draft';
+  textContent?: string;
+  videoUrl?: string;
+  questions?: QuizQuestion[];
 }
 
 export interface EditorModule {
@@ -60,18 +67,22 @@ interface FormState {
   price: number;
   old_price: number | null;
   is_free: boolean;
+  learn_items: string[];
+  includes: string[];
 }
 
 const TYPE_ICONS: Record<EditorLesson['type'], { label: string; cls: string }> = {
   video: { label: '▶', cls: 'typeVideo' },
   quiz:  { label: '?', cls: 'typeQuiz' },
   text:  { label: '≡', cls: 'typeText' },
+  assignment: { label: '✎', cls: 'typeAssignment' },
 };
 
 const TYPE_LABELS: Record<EditorLesson['type'], string> = {
   video: 'Видео',
   quiz:  'Тест',
   text:  'Текст',
+  assignment: 'Задание',
 };
 
 const LEVELS = [
@@ -88,9 +99,11 @@ export default function CourseEditor({ courseId, onBack, onOpenLessonModal, onEd
 
   const publishMut = usePublishCourse();
   const unpublishMut = useUnpublishCourse();
+  const updateCourseMut = useUpdateCourse();
   const createModuleMut = useCreateModule();
   const updateModuleMut = useUpdateModule();
   const deleteModuleMut = useDeleteModule();
+  const updateLessonMut = useUpdateLesson();
   const deleteLessonMut = useDeleteLesson();
 
   const [tab, setTab] = useState<EditorTab>('program');
@@ -98,6 +111,12 @@ export default function CourseEditor({ courseId, onBack, onOpenLessonModal, onEd
   const [form, setForm] = useState<FormState | null>(null);
   const [editingModuleId, setEditingModuleId] = useState<string | null>(null);
   const [editingModuleTitle, setEditingModuleTitle] = useState('');
+  const [localModules, setLocalModules] = useState<StudioModule[] | null>(null);
+  const [draggedModuleIdx, setDraggedModuleIdx] = useState<number | null>(null);
+  const [dragOverModuleIdx, setDragOverModuleIdx] = useState<number | null>(null);
+  const [draggedLesson, setDraggedLesson] = useState<{ modIdx: number; lessonIdx: number } | null>(null);
+  const [dragOverLesson, setDragOverLesson] = useState<{ modIdx: number; lessonIdx: number } | null>(null);
+  const [saveState, setSaveState] = useState<'idle' | 'saving' | 'saved'>('idle');
 
   useEffect(() => {
     if (course && !form) {
@@ -110,10 +129,18 @@ export default function CourseEditor({ courseId, onBack, onOpenLessonModal, onEd
         price: course.price,
         old_price: course.old_price,
         is_free: course.is_free ?? false,
+        learn_items: course.learn_items ?? [],
+        includes: course.includes ?? [],
       });
       setOpenModules(new Set((course.modules ?? []).map((m, i) => m.id ?? `mod_${i}`)));
     }
   }, [course, form]);
+
+  // Re-sync the locally reorderable copy whenever fresh server data arrives
+  // (initial load, or after a drag-and-drop reorder has been persisted).
+  useEffect(() => {
+    setLocalModules(course?.modules ?? null);
+  }, [course]);
 
   if (!course) {
     return (
@@ -123,12 +150,50 @@ export default function CourseEditor({ courseId, onBack, onOpenLessonModal, onEd
     );
   }
 
-  const modules = course.modules ?? [];
+  const modules = localModules ?? course.modules ?? [];
   const totalModules = modules.length;
   const totalLessons = modules.reduce((sum, m) => sum + (m.lessons?.length ?? 0), 0);
 
   const updateForm = <K extends keyof FormState>(key: K, value: FormState[K]) => {
     setForm(prev => prev ? { ...prev, [key]: value } : prev);
+  };
+
+  const addListItem = (key: 'learn_items' | 'includes') => {
+    setForm(prev => prev ? { ...prev, [key]: [...prev[key], ''] } : prev);
+  };
+
+  const updateListItem = (key: 'learn_items' | 'includes', idx: number, value: string) => {
+    setForm(prev => prev ? { ...prev, [key]: prev[key].map((v, i) => i === idx ? value : v) } : prev);
+  };
+
+  const removeListItem = (key: 'learn_items' | 'includes', idx: number) => {
+    setForm(prev => prev ? { ...prev, [key]: prev[key].filter((_, i) => i !== idx) } : prev);
+  };
+
+  const handleSaveSettings = async () => {
+    if (!form) return;
+    setSaveState('saving');
+    try {
+      await updateCourseMut.mutateAsync({
+        id: courseId,
+        payload: {
+          title: form.title,
+          subtitle: form.subtitle,
+          category_id: form.category_id,
+          level: form.level,
+          description: form.description,
+          price: form.price,
+          old_price: form.old_price,
+          is_free: form.is_free,
+          learn_items: form.learn_items.filter(v => v.trim()),
+          includes: form.includes.filter(v => v.trim()),
+        },
+      });
+      setSaveState('saved');
+      setTimeout(() => setSaveState('idle'), 2000);
+    } catch {
+      setSaveState('idle');
+    }
   };
 
   const toggleModule = (id: string) => {
@@ -149,7 +214,7 @@ export default function CourseEditor({ courseId, onBack, onOpenLessonModal, onEd
   };
 
   const handleAddModule = async () => {
-    const created = await createModuleMut.mutateAsync({ courseId, title: 'Новый модуль' });
+    const created = await createModuleMut.mutateAsync({ courseId, title: 'Новый модуль', sort_order: modules.length });
     setOpenModules(prev => new Set(prev).add(created.id));
   };
 
@@ -171,8 +236,94 @@ export default function CourseEditor({ courseId, onBack, onOpenLessonModal, onEd
       setEditingModuleId(null);
       return;
     }
-    await updateModuleMut.mutateAsync({ courseId, moduleId: editingModuleId, title: editingModuleTitle.trim() });
+    await updateModuleMut.mutateAsync({ courseId, moduleId: editingModuleId, payload: { title: editingModuleTitle.trim() } });
     setEditingModuleId(null);
+  };
+
+  /* ── Drag & drop reordering ── */
+
+  const persistModuleOrder = async (ordered: StudioModule[]) => {
+    try {
+      await Promise.all(
+        ordered.map((m, i) =>
+          m.id ? updateModuleMut.mutateAsync({ courseId, moduleId: m.id, payload: { sort_order: i } }) : Promise.resolve()
+        )
+      );
+    } catch { /* */ }
+  };
+
+  const handleModuleDragStart = (idx: number) => () => {
+    setDraggedModuleIdx(idx);
+  };
+
+  const handleModuleDragOver = (idx: number) => (e: DragEvent) => {
+    e.preventDefault();
+    if (draggedModuleIdx === null || draggedModuleIdx === idx) return;
+    setDragOverModuleIdx(idx);
+  };
+
+  const handleModuleDrop = (idx: number) => async (e: DragEvent) => {
+    e.preventDefault();
+    const from = draggedModuleIdx;
+    setDraggedModuleIdx(null);
+    setDragOverModuleIdx(null);
+    if (from === null || from === idx) return;
+
+    const next = [...modules];
+    const [moved] = next.splice(from, 1);
+    next.splice(idx, 0, moved);
+    setLocalModules(next);
+    await persistModuleOrder(next);
+  };
+
+  const handleModuleDragEnd = () => {
+    setDraggedModuleIdx(null);
+    setDragOverModuleIdx(null);
+  };
+
+  const persistLessonOrder = async (lessons: StudioLesson[]) => {
+    try {
+      await Promise.all(
+        lessons.map((l, i) =>
+          updateLessonMut.mutateAsync({ courseId, lessonId: String(l.id), payload: { sort_order: i } })
+        )
+      );
+    } catch { /* */ }
+  };
+
+  const handleLessonDragStart = (modIdx: number, lessonIdx: number) => (e: DragEvent) => {
+    e.stopPropagation();
+    setDraggedLesson({ modIdx, lessonIdx });
+  };
+
+  const handleLessonDragOver = (modIdx: number, lessonIdx: number) => (e: DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (!draggedLesson || draggedLesson.modIdx !== modIdx || draggedLesson.lessonIdx === lessonIdx) return;
+    setDragOverLesson({ modIdx, lessonIdx });
+  };
+
+  const handleLessonDrop = (modIdx: number, lessonIdx: number) => async (e: DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const from = draggedLesson;
+    setDraggedLesson(null);
+    setDragOverLesson(null);
+    if (!from || from.modIdx !== modIdx || from.lessonIdx === lessonIdx) return;
+
+    const mod = modules[modIdx];
+    const lessons = [...(mod.lessons ?? [])];
+    const [moved] = lessons.splice(from.lessonIdx, 1);
+    lessons.splice(lessonIdx, 0, moved);
+    const next = modules.map((m, i) => i === modIdx ? { ...m, lessons } : m);
+    setLocalModules(next);
+    await persistLessonOrder(lessons);
+  };
+
+  const handleLessonDragEnd = (e: DragEvent) => {
+    e.stopPropagation();
+    setDraggedLesson(null);
+    setDragOverLesson(null);
   };
 
   const displayTitle = form?.title || course.title || 'Без названия';
@@ -225,8 +376,19 @@ export default function CourseEditor({ courseId, onBack, onOpenLessonModal, onEd
             const isEditingThis = editingModuleId === modKey;
             const lessons = mod.lessons ?? [];
             return (
-              <div className={s.moduleCard} key={modKey}>
-                <div className={s.moduleHeader} onClick={() => toggleModule(modKey)}>
+              <div
+                className={`${s.moduleCard} ${draggedModuleIdx === mi ? s.dragging : ''} ${dragOverModuleIdx === mi ? s.dragOver : ''}`}
+                key={modKey}
+              >
+                <div
+                  className={s.moduleHeader}
+                  onClick={() => toggleModule(modKey)}
+                  draggable={!!mod.id}
+                  onDragStart={handleModuleDragStart(mi)}
+                  onDragOver={handleModuleDragOver(mi)}
+                  onDrop={handleModuleDrop(mi)}
+                  onDragEnd={handleModuleDragEnd}
+                >
                   <span className={s.dragHandle}>&#x2817;</span>
                   <span className={isOpen ? s.chevronOpen : s.chevron}>
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -271,12 +433,22 @@ export default function CourseEditor({ courseId, onBack, onOpenLessonModal, onEd
 
                 {isOpen && lessons.length > 0 && (
                   <div className={s.lessonList}>
-                    {lessons.map(lesson => {
+                    {lessons.map((lesson, li) => {
                       const lessonType = lesson.type ?? 'video';
                       const icon = TYPE_ICONS[lessonType];
                       const lessonId = String(lesson.id);
+                      const isDraggingThis = draggedLesson?.modIdx === mi && draggedLesson.lessonIdx === li;
+                      const isDragOverThis = dragOverLesson?.modIdx === mi && dragOverLesson.lessonIdx === li;
                       return (
-                        <div className={s.lessonRow} key={lessonId}>
+                        <div
+                          className={`${s.lessonRow} ${isDraggingThis ? s.dragging : ''} ${isDragOverThis ? s.dragOver : ''}`}
+                          key={lessonId}
+                          draggable
+                          onDragStart={handleLessonDragStart(mi, li)}
+                          onDragOver={handleLessonDragOver(mi, li)}
+                          onDrop={handleLessonDrop(mi, li)}
+                          onDragEnd={handleLessonDragEnd}
+                        >
                           <span className={s.lessonDrag}>&#x2817;</span>
                           <span className={s[icon.cls as keyof typeof s] as string}>
                             {icon.label}
@@ -332,6 +504,18 @@ export default function CourseEditor({ courseId, onBack, onOpenLessonModal, onEd
 
       {/* Settings tab */}
       {tab === 'settings' && form && (
+        <>
+          <div className={s.toolbar}>
+            <button
+              className={s.toolbarBtnPrimary}
+              onClick={handleSaveSettings}
+              disabled={saveState === 'saving'}
+            >
+              {saveState === 'saving' ? 'Сохранение…' : 'Сохранить изменения'}
+            </button>
+            {saveState === 'saved' && <span className={s.saveStatus}>Сохранено ✓</span>}
+          </div>
+
         <div className={s.settingsGrid}>
           <div>
             {/* Main info card */}
@@ -429,6 +613,40 @@ export default function CourseEditor({ courseId, onBack, onOpenLessonModal, onEd
                 <span className={s.checkboxLabel}>Бесплатный курс</span>
               </div>
             </div>
+
+            {/* Learn items card */}
+            <div className={s.card}>
+              <h3 className={s.cardTitle}>Чему вы научитесь</h3>
+              {form.learn_items.map((item, idx) => (
+                <div className={s.listItemRow} key={idx}>
+                  <input
+                    className={s.input}
+                    value={item}
+                    onChange={e => updateListItem('learn_items', idx, e.target.value)}
+                    placeholder="Например: Настройка камеры: выдержка, диафрагма, ISO"
+                  />
+                  <button className={s.listRemoveBtn} onClick={() => removeListItem('learn_items', idx)}>&times;</button>
+                </div>
+              ))}
+              <button className={s.listAddBtn} onClick={() => addListItem('learn_items')}>＋ Добавить пункт</button>
+            </div>
+
+            {/* Includes card */}
+            <div className={s.card}>
+              <h3 className={s.cardTitle}>Что входит в курс</h3>
+              {form.includes.map((item, idx) => (
+                <div className={s.listItemRow} key={idx}>
+                  <input
+                    className={s.input}
+                    value={item}
+                    onChange={e => updateListItem('includes', idx, e.target.value)}
+                    placeholder="Например: 42 часа видео"
+                  />
+                  <button className={s.listRemoveBtn} onClick={() => removeListItem('includes', idx)}>&times;</button>
+                </div>
+              ))}
+              <button className={s.listAddBtn} onClick={() => addListItem('includes')}>＋ Добавить пункт</button>
+            </div>
           </div>
 
           {/* Sidebar */}
@@ -466,6 +684,7 @@ export default function CourseEditor({ courseId, onBack, onOpenLessonModal, onEd
             </div>
           </div>
         </div>
+        </>
       )}
     </div>
   );

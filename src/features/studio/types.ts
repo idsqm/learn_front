@@ -1,7 +1,7 @@
 export interface StudioLesson {
   id: number | string;
   name: string;
-  type?: 'video' | 'quiz' | 'text';
+  type?: 'video' | 'quiz' | 'text' | 'assignment';
   duration: string;
   is_free: boolean;
   status?: 'ready' | 'draft';
@@ -30,6 +30,8 @@ export interface StudioCourse {
   modules: StudioModule[];
   students_count: number;
   rating: number;
+  learn_items?: string[];
+  includes?: string[];
 }
 
 export interface StudioStats {
