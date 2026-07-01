@@ -5,6 +5,7 @@ interface User {
   username: string;
   email: string;
   role: 'student' | 'author';
+  avatarUrl: string | null;
 }
 
 interface AuthState {
@@ -38,7 +39,12 @@ function tokenExpiresIn(token: string): number {
 
 async function fetchUser(accessToken?: string): Promise<User> {
   const me = await authApi.getMe(accessToken);
-  return { username: me.username, email: me.email, role: (me.role === 'author' ? 'author' : 'student') };
+  return {
+    username: me.username,
+    email: me.email,
+    role: (me.role === 'author' ? 'author' : 'student'),
+    avatarUrl: me.avatar_url ?? null,
+  };
 }
 
 function saveToStorage(accessToken: string, refreshToken: string, user: User) {

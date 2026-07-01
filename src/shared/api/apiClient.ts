@@ -2,6 +2,7 @@ import axios, { AxiosError } from 'axios';
 
 const authBaseURL = import.meta.env.VITE_AUTH_API_URL || 'http://localhost:8080';
 const coursesBaseURL = import.meta.env.VITE_COURSES_API_URL || 'http://localhost:8081';
+export const filesBaseURL = import.meta.env.VITE_FILES_API_URL || 'http://localhost:8082';
 
 const STORAGE_KEY = 'learnquest_auth';
 
@@ -77,6 +78,13 @@ export const coursesClient = axios.create({
 });
 coursesClient.interceptors.request.use(addAuth);
 handle401(coursesClient);
+
+export const filesClient = axios.create({
+  baseURL: `${filesBaseURL}/api/v1`,
+  headers: { 'Content-Type': 'application/json' },
+});
+filesClient.interceptors.request.use(addAuth);
+handle401(filesClient);
 
 /** @deprecated use authClient or coursesClient */
 export const apiClient = authClient;

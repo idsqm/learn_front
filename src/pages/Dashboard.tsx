@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../features/auth/store/authStore';
 import { useEnrollments, useUserStats, useFavorites, useCertificates, useRecommendedCourses } from '../features/courses/api/queries';
 import SessionsTab from '../features/dashboard/components/SessionsTab';
+import ProfileTab from '../features/dashboard/components/ProfileTab';
 import CourseCard from '../shared/components/CourseCard';
 import { fmtHours } from '../shared/utils/format';
 import s from './Dashboard.module.css';
@@ -179,7 +180,12 @@ export default function Dashboard() {
         )
       )}
 
-      {tab === 'settings' && <SessionsTab />}
+      {tab === 'settings' && (
+        <>
+          <ProfileTab />
+          <SessionsTab />
+        </>
+      )}
     </main>
   );
 }

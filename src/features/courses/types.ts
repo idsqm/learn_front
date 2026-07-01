@@ -15,6 +15,7 @@ export interface CourseListItem {
   color_1: string;
   color_2: string;
   tag: string | null;
+  preview_url?: string | null;
 }
 
 export interface Lesson {

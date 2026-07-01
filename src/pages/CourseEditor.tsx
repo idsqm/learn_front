@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
-import type { DragEvent } from 'react';
+import { useState, useEffect, useRef } from 'react';
+import type { DragEvent, ChangeEvent } from 'react';
 import {
   useStudioCourse,
   useCategories,
@@ -14,6 +14,7 @@ import {
 } from '../features/studio/api/queries';
 import type { LessonEditData, QuizQuestion } from '../shared/components/LessonModal';
 import type { StudioModule, StudioLesson } from '../features/studio/types';
+import { uploadFile } from '../shared/api/filesApi';
 import s from './CourseEditor.module.css';
 
 /* ── Types (exported for NewCourse / Studio) ── */
@@ -67,6 +68,7 @@ interface FormState {
   price: number;
   old_price: number | null;
   is_free: boolean;
+  preview_url: string | null;
   learn_items: string[];
   includes: string[];
 }
@@ -117,6 +119,8 @@ export default function CourseEditor({ courseId, onBack, onOpenLessonModal, onEd
   const [draggedLesson, setDraggedLesson] = useState<{ modIdx: number; lessonIdx: number } | null>(null);
   const [dragOverLesson, setDragOverLesson] = useState<{ modIdx: number; lessonIdx: number } | null>(null);
   const [saveState, setSaveState] = useState<'idle' | 'saving' | 'saved'>('idle');
+  const [uploadingCover, setUploadingCover] = useState(false);
+  const coverInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (course && !form) {
@@ -129,6 +133,7 @@ export default function CourseEditor({ courseId, onBack, onOpenLessonModal, onEd
         price: course.price,
         old_price: course.old_price,
         is_free: course.is_free ?? false,
+        preview_url: course.preview_url ?? null,
         learn_items: course.learn_items ?? [],
         includes: course.includes ?? [],
       });
@@ -193,6 +198,20 @@ export default function CourseEditor({ courseId, onBack, onOpenLessonModal, onEd
       setTimeout(() => setSaveState('idle'), 2000);
     } catch {
       setSaveState('idle');
+    }
+  };
+
+  const handleCoverChange = async (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    e.target.value = '';
+    if (!file) return;
+    setUploadingCover(true);
+    try {
+      const { downloadUrl } = await uploadFile(file, 'image');
+      updateForm('preview_url', downloadUrl);
+      await updateCourseMut.mutateAsync({ id: courseId, payload: { preview_url: downloadUrl } });
+    } finally {
+      setUploadingCover(false);
     }
   };
 
@@ -654,8 +673,23 @@ export default function CourseEditor({ courseId, onBack, onOpenLessonModal, onEd
             {/* Cover card */}
             <div className={s.card}>
               <h3 className={s.cardTitle}>Обложка курса</h3>
-              <div className={s.coverPlaceholder} />
-              <button className={s.uploadBtn}>Загрузить обложку</button>
+              {form.preview_url
+                ? <img className={s.coverImg} src={form.preview_url} alt="Обложка курса" />
+                : <div className={s.coverPlaceholder} />}
+              <input
+                ref={coverInputRef}
+                type="file"
+                accept="image/*"
+                hidden
+                onChange={handleCoverChange}
+              />
+              <button
+                className={s.uploadBtn}
+                onClick={() => coverInputRef.current?.click()}
+                disabled={uploadingCover}
+              >
+                {uploadingCover ? 'Загрузка…' : 'Загрузить обложку'}
+              </button>
             </div>
 
             {/* Publish card */}

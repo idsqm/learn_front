@@ -106,7 +106,14 @@ export const authApi = {
   async getMe(accessToken?: string) {
     try {
       const headers = accessToken ? { Authorization: `Bearer ${accessToken}` } : undefined;
-      const { data } = await apiClient.get<{ id: string; username: string; email: string; role: string }>('/auth/me', { headers });
+      const { data } = await apiClient.get<{ id: string; username: string; email: string; role: string; avatar_url: string | null }>('/auth/me', { headers });
+      return data;
+    } catch (err) { handleError(err); }
+  },
+
+  async updateAvatar(avatarUrl: string) {
+    try {
+      const { data } = await apiClient.put<{ message: string }>('/auth/me/avatar', { avatar_url: avatarUrl });
       return data;
     } catch (err) { handleError(err); }
   },

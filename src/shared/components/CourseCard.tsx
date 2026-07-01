@@ -16,7 +16,14 @@ export default function CourseCard({ course: c, showLevel, showStudents, compact
 
   return (
     <article className={`${s.card}${className ? ` ${className}` : ''}`} onClick={() => navigate(`/course/${c.id}`)}>
-      <div className={s.thumb} style={{ backgroundImage: `linear-gradient(135deg, ${c.color_1}, ${c.color_2})` }}>
+      <div
+        className={s.thumb}
+        style={
+          c.preview_url
+            ? { backgroundImage: `url(${c.preview_url})`, backgroundSize: 'cover', backgroundPosition: 'center' }
+            : { backgroundImage: `linear-gradient(135deg, ${c.color_1}, ${c.color_2})` }
+        }
+      >
         <span className={s.categoryBadge}>{c.category}</span>
         {c.tag && <span className={s.tagBadge}>{c.tag}</span>}
       </div>

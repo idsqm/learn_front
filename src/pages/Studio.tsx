@@ -91,6 +91,9 @@ export default function Studio() {
   const courses = coursesData?.data ?? [];
 
   const initials = user?.username ? user.username.slice(0, 2).toUpperCase() : 'АК';
+  const avatarStyle = user?.avatarUrl
+    ? { backgroundImage: `url(${user.avatarUrl})`, backgroundSize: 'cover', backgroundPosition: 'center' }
+    : undefined;
   const displayName = user?.username || 'Автор';
 
   useEffect(() => {
@@ -366,7 +369,14 @@ export default function Studio() {
                   className={i === 0 ? s.courseRow : s.courseRowBorder}
                   onClick={() => handleOpenEditor(String(c.id))}
                 >
-                  <div className={s.courseThumb} style={{ backgroundImage: 'linear-gradient(135deg, #6a5cf0, #9183f7)' }} />
+                  <div
+                    className={s.courseThumb}
+                    style={
+                      c.preview_url
+                        ? { backgroundImage: `url(${c.preview_url})`, backgroundSize: 'cover', backgroundPosition: 'center' }
+                        : { backgroundImage: 'linear-gradient(135deg, #6a5cf0, #9183f7)' }
+                    }
+                  />
                   <div className={s.courseInfo}>
                     <div className={s.courseTitle}>
                       <span className={s.courseName}>{c.title || 'Без названия'}</span>
@@ -424,13 +434,13 @@ export default function Studio() {
           </button>
 
           <div className={s.avatarWrap}>
-            <div className={s.avatar} onClick={() => setMenuOpen(!menuOpen)}>{initials}</div>
+            <div className={s.avatar} style={avatarStyle} onClick={() => setMenuOpen(!menuOpen)}>{!user?.avatarUrl && initials}</div>
             {menuOpen && (
               <>
                 <div className={s.menuOverlay} onClick={() => setMenuOpen(false)} />
                 <div className={s.menu}>
                   <div className={s.menuUser}>
-                    <div className={s.menuUserAvatar}>{initials}</div>
+                    <div className={s.menuUserAvatar} style={avatarStyle}>{!user?.avatarUrl && initials}</div>
                     <div style={{ minWidth: 0 }}>
                       <div className={s.menuUserName}>{user?.username || 'Пользователь'}</div>
                       <div className={s.menuUserEmail}>{user?.email || ''}</div>

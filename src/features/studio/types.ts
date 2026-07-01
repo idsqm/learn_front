@@ -26,6 +26,7 @@ export interface StudioCourse {
   price: number;
   old_price: number | null;
   is_free?: boolean;
+  preview_url?: string | null;
   status?: 'published' | 'draft';
   modules: StudioModule[];
   students_count: number;

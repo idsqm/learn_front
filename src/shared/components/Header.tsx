@@ -14,6 +14,9 @@ export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
 
   const initials = user?.username ? user.username.slice(0, 2).toUpperCase() : 'АП';
+  const avatarStyle = user?.avatarUrl
+    ? { backgroundImage: `url(${user.avatarUrl})`, backgroundSize: 'cover', backgroundPosition: 'center' }
+    : undefined;
 
   const handleSearch = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter' && search.trim()) {
@@ -59,13 +62,13 @@ export default function Header() {
             </>
           ) : (
             <div className={s.avatarWrap}>
-              <div className={s.avatar} onClick={() => setMenuOpen(!menuOpen)}>{initials}</div>
+              <div className={s.avatar} style={avatarStyle} onClick={() => setMenuOpen(!menuOpen)}>{!user?.avatarUrl && initials}</div>
               {menuOpen && (
                 <>
                   <div className={s.menuOverlay} onClick={() => setMenuOpen(false)} />
                   <div className={s.menu}>
                     <div className={s.menuUser}>
-                      <div className={s.menuUserAvatar}>{initials}</div>
+                      <div className={s.menuUserAvatar} style={avatarStyle}>{!user?.avatarUrl && initials}</div>
                       <div style={{ minWidth: 0 }}>
                         <div className={s.menuUserName}>{user?.username || 'Пользователь'}</div>
                         <div className={s.menuUserEmail}>{user?.email || ''}</div>

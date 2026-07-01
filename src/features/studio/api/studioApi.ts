@@ -18,6 +18,7 @@ export interface CreateCoursePayload {
   price: number;
   old_price?: number | null;
   is_free: boolean;
+  preview_url?: string | null;
   learn_items?: string[];
   includes?: string[];
 }
